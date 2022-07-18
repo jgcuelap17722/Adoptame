@@ -8,6 +8,7 @@ import { Solicitudes } from "../models/Solicitudes.js";
 
 /// POST USER
 export const createUser = async (req, res) => {
+  // #swagger.tags = ['USER']
   // const documentfile = req.files.map((d) => d.path);
   // const idfiles = req.files.map((d) =>
   //   d.filename.slice(d.filename.lastIndexOf("/") + 1)
@@ -112,6 +113,7 @@ export const createUser = async (req, res) => {
 
 /// GET USER
 export const getUser = async (req, res) => {
+  // #swagger.tags = ['USER']
   try {
     let userFundation = await User.findAll({
       attributes: {
@@ -132,6 +134,7 @@ export const getUser = async (req, res) => {
 
 /// GET DETAILS USER
 export const getDetailUser = async (req, res) => {
+  // #swagger.tags = ['USER']
   const { id } = req.params;
   try {
     if (id) {
@@ -194,6 +197,7 @@ const userDetail = async (id) => {
 };
 //UPDATE USER
 export const updateUser = async (req, res) => {
+  // #swagger.tags = ['USER']
   const { id } = req.params;
   const { password, newPassword, cityId, countryId } = req.body;
   const us = await User.findOne({
@@ -242,6 +246,7 @@ export const updateUser = async (req, res) => {
 
 //PUT USER from admin
 export const adminUpdateUser = async (req, res) => {
+  // #swagger.tags = ['USER']
   const { id } = req.params;
   const { name, lastName, role, address, phone, active } = req.body;
   console.log(req.body);
@@ -270,6 +275,7 @@ export const adminUpdateUser = async (req, res) => {
 //PUT solicitud from admin
 
 export const updatesolicitud = async (req, res) => {
+  // #swagger.tags = ['SOLICITUD']
   const { id } = req.params;
   const { estado, fechafinaliza } = req.body;
   try {
