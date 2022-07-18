@@ -11,7 +11,7 @@ export const authMiddleware = async (req, res, next) => {
     const token = authorization.split(" ").pop();
 
     const dataToken = await verifyToken(token);
-  
+
     if (!dataToken) {
       return res.status(401).send({ Error: "TOKEN INVALID!!" });
     }
