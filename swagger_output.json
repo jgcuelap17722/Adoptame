@@ -241,9 +241,6 @@
         }
       },
       "put": {
-        "tags": [
-          "USER"
-        ],
         "description": "",
         "parameters": [
           {
@@ -300,9 +297,6 @@
     },
     "/api/v1.0/user/soli/{id}": {
       "put": {
-        "tags": [
-          "SOLICITUD"
-        ],
         "description": "",
         "parameters": [
           {
