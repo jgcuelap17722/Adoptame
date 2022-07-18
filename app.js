@@ -19,11 +19,14 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
+
 app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/", (req, res) => {
   return res.redirect("/docs");
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 
 //use routes
 app.use("/api/v1.0", index);
