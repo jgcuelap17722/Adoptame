@@ -2,8 +2,12 @@ import { Pets } from '../models/Pets.js';
 import { User } from '../models/User.js';
 import { TypePet } from '../models/Typepet.js';
 import { BreedPet } from '../models/Breedpet.js';
+import { ColorPet } from '../models/Colorpet.js';
 import { deleteFile } from '../middlewares/cloudinary.js';
 import { findAllPets, findByPkPets } from '../models/Views/pets.views.js';
+import { favouritePetsByUser } from '../controllers/favouriteController.js';
+import { faker } from '@faker-js/faker';
+import axios from 'axios';
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -23,17 +27,33 @@ export const getPetsById = async (req, res) => {
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { name } = req.query;
+    const { userId } = req.query;
 
-    if (name === '') {
+    if (userId) {
       const allPets = await findAllPets();
-      return res.status(200).json(allPets);
-    }
+      const favouritePetsbyUser = await favouritePetsByUser(userId);
 
-    if (name) {
-      const allPets = await findAllPets();
-      const petByName = allPets.filter(pet => pet.name.toLowerCase().indexOf(name.toLowerCase()) > -1)
-      return res.status(200).json(petByName);
+      const mergeAllAndFavouritePets = [
+        ...allPets,
+        ...favouritePetsbyUser
+      ]
+
+      const set = new Set()
+      const uniquePets = mergeAllAndFavouritePets.filter(pet => {
+        const alreadyHas = set.has(pet.id)
+        set.add(pet.id)
+        return !alreadyHas
+      })
+
+      const idFavourites = favouritePetsbyUser.map(pet => pet.id)
+
+      const allAndFavouritePets = uniquePets.map(pet => {
+        if (idFavourites.includes(pet.id)) {
+          pet.isFavourite = true
+        }
+        return pet
+      })
+      return res.status(200).json(allAndFavouritePets);
     }
     const allPets = await findAllPets();
     return res.status(200).json(allPets);
@@ -61,7 +81,7 @@ export const createPets = async (req, res) => {
         name: "user_test",
         typeId: "dog",
         breedId: 2,
-        typeHair: "short",
+        coat: "short",
         specialCares: false,
         castrated: false,
         gender: "male",
@@ -78,8 +98,7 @@ export const createPets = async (req, res) => {
   */
 
   const images = req?.files?.length
-    ? req.files.map(image => image.path)
-    : [];
+    ? req.files.map(image => image.path) : [];
   const idFiles = req?.files?.length
     ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
     : [];
@@ -88,45 +107,62 @@ export const createPets = async (req, res) => {
       name,
       typeId,
       breedId,
-      typeHair,
-      specialCares,
-      castrated,
-      gender,
-      environment,
-      tags,
-      size,
-      color,
+      colorId,
       age,
+      gender,
+      size,
+      coat,
       health,
       description,
+      tags,
+      castrated,
+      attributes,
+      environment,
       userId
     } = req.body;
 
     const user = await User.findByPk(userId);
     const type = await TypePet.findByPk(typeId);
     const breed = await BreedPet.findByPk(breedId);
+    const color = await ColorPet.findByPk(colorId);
+
+    // Traer imagenes random
+    let resultPhotos = faker.datatype.number({ min: 1, max: 5 });
+    let photosCats = [];
+    for (let index = 0; index < resultPhotos; index++) {
+      photosCats.push(faker.image.cats());
+    }
+
+    let photosDogs = [];
+    for (let index = 0; index < resultPhotos; index++) {
+      let { data } = await axios.get('https://dog.ceo/api/breeds/image/random');
+      let urlImageDog = await data.message;
+      photosDogs.push(urlImageDog);
+    }
+    const imagenes_genericas = faker.helpers.arrayElements(type.id === 'gato' ? photosCats : photosDogs, resultPhotos);
 
     if (user) {
       const newPet = await Pets.create({
         name,
-        typeId,
-        breedId,
-        typeHair,
-        specialCares: typeof specialCares === "boolean" ? specialCares : specialCares == "true",
-        castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
-        gender,
-        environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
-        tags,
-        size,
-        color,
         age,
+        gender,
+        size,
+        coat,
         health,
         description,
-        photos: images
+        tags,
+        castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
+        attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes,
+        environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
+        photos: imagenes_genericas,
       });
+
+      // dependencies
       await newPet.setUser(user);
       await newPet.setTypepet(type);
       await newPet.setBreedpet(breed);
+      await newPet.setColorpet(color);
+
       const detailPetCreated = await findByPkPets(newPet.id);
       return res.status(201).json({ data: detailPetCreated, message: 'successfully created pet' });
     }
@@ -157,24 +193,26 @@ export const updatePets = async (req, res) => {
       name,
       typeId,
       breedId,
-      typeHair,
+      coat,
       specialCares,
       castrated,
       gender,
       environment,
       tags,
       size,
-      color,
       age,
       health,
       description,
       status,
       urlPhotosDb,
+      colorId,
+      attributes,
     } = req.body;
 
     const pet = await Pets.findByPk(id);
     const breed = await BreedPet.findByPk(breedId);
     const type = await TypePet.findByPk(typeId);
+    const color = await ColorPet.findByPk(colorId);
 
     const urlsDb = urlPhotosDb === "" ? [] : urlPhotosDb;
 
@@ -192,7 +230,7 @@ export const updatePets = async (req, res) => {
 
       const petUpdated = await Pets.update({
         name,
-        typeHair,
+        coat,
         specialCares: typeof specialCares === "boolean" ? specialCares : specialCares == "true",
         castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
         gender,
@@ -204,7 +242,8 @@ export const updatePets = async (req, res) => {
         health,
         description,
         photos: urlsDb.concat(imageUploadUrls),
-        status
+        status,
+        attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes
       }, {
         where: {
           id

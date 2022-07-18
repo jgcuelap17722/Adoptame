@@ -1,6 +1,6 @@
 export const typesPets = [
   {
-    type: "dog",
+    type: "perro",
     breeds: [
       'affenpinscher',
       'african',
@@ -98,10 +98,10 @@ export const typesPets = [
       'weimaraner',
       'whippet',
       'wolfhound'
-    ]
+    ],
   },
   {
-    type: "cat",
+    type: "gato",
     breeds: [
       'Abyssinian',
       'Aegean',

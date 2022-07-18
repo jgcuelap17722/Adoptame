@@ -12,8 +12,8 @@ export const authMiddleware = async (req, res, next) => {
 
     const dataToken = await verifyToken(token);
   
-    if (!dataToken.id) {
-      return res.status(401).send({ Error: "ID_TOKEN" });
+    if (!dataToken) {
+      return res.status(401).send({ Error: "TOKEN INVALID!!" });
     }
     next();
   } catch (error) {
