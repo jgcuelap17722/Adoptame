@@ -4,7 +4,9 @@ import { getPaymentByIdService } from '../services/PaymentService.js';
 export const createDonation = async (req, res) => {
   try {
     const { data } = req.body;
+    console.log("req.body: ", req.body);
     const payment = await getPaymentByIdService(data.id);
+    console.log("payment: ", payment);
     if (payment) {
       const {
         metadata,
@@ -32,7 +34,7 @@ export const createDonation = async (req, res) => {
         return res.status(201).json({ data: newFavouritePet, message: "successfully donated" })
       }
     }
-    return res.status(4700).json({ data: req.body });
+    return res.status(400).json({ data: req.body });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });

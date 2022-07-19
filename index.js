@@ -21,7 +21,7 @@ async function main() {
        await preloadColorsPets();
        _FORCE && await preloadFundations();
        _FORCE && await preloadUser();
-       _FORCE && await preloadPets(10);
+       _FORCE && await preloadPets(30);
        console.log(`Server runing in port ${PORT}`);
     });
   } catch (error) {

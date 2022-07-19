@@ -113,6 +113,8 @@ export const createPets = async (req, res) => {
     ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
     : [];
   try {
+    const { data } = req.body;
+    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -129,7 +131,7 @@ export const createPets = async (req, res) => {
       attributes,
       environment,
       userId
-    } = req.body;
+    } = infoPets;
 
     const user = await User.findByPk(userId);
     const type = await TypePet.findByPk(typeId);

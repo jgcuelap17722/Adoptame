@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { typesPets } from '../database/typePets.js';
 import pets from '../database/pets.js';
 
 import axios from 'axios';
@@ -71,7 +70,7 @@ export const generateDataPets = async (results, ids) => {
         (type === 'perro' && genders === 'macho') ? faker.helpers.arrayElement(names.perro.macho) :
           (type === 'perro' && genders === 'hembra') ? faker.helpers.arrayElement(names.perro.hembra) : "Error"
 
-    let resultPhotos = faker.datatype.number({ min: 1, max: 5 });
+    let resultPhotos = faker.datatype.number({ min: 2, max: 5 });
 
     let urlCats = new Set();
     for (let index = 0; index < resultPhotos; index++) {
