@@ -1,6 +1,5 @@
 import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
-import { sendEmails } from "../helpers/sendEmails.js";
 import { encrypt } from "../helpers/handleBcrypt.js";
 import { autoMail } from "../helpers/sendEmails.js";
 
