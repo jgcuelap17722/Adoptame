@@ -1,5 +1,6 @@
 import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
+import { sendEmails } from "../helpers/sendEmails.js";
 import { encrypt } from "../helpers/handleBcrypt.js";
 import { autoMail } from "../helpers/sendEmails.js";
 
@@ -122,16 +123,16 @@ export const recuperated = async (req, res) => {
       where: { id: info.id },
     });
     if (!busqueda) {
-      return res.status(400).json({ msg: "verification fail" });
+      return res.status(400).json({ error: "verification fail" });
     }
     if (password1 !== password2) {
-      return res.status(400).json({ msg: "the password does not match" });
+      return res.status(400).json({ error: "the password does not match" });
     }
     let passwordHash = await encrypt(password1);
     await User.update({ password: passwordHash }, { where: { id: info.id } });
     res.status(200).json({ msg: "updated password" });
   } catch (error) {
     console.log(error);
-    res.json({ msg: "verification fail" });
+    res.json({ error: "verification fail" });
   }
 };
