@@ -1,6 +1,5 @@
 import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
-import { sendEmails } from "../helpers/sendEmails.js";
 import { encrypt } from "../helpers/handleBcrypt.js";
 import { autoMail } from "../helpers/sendEmails.js";
 
@@ -64,7 +63,7 @@ export const logVerify = async (req, res) => {
           await User.update({verification: true}, {where: {id: info.id}})
 
           res.json({msg: "verified email"})
-        
+         
     } catch (error) {
         console.log(error)
         res.json({msg: "verification fail"})
