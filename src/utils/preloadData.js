@@ -113,7 +113,8 @@ export const preloadFundations= async()=>{
           phone:"111111",
           role:"fundation",
           countryId:organizations[i].address.country,
-          cityId:organizations[i].address.city  
+          cityId:organizations[i].address.city,
+          verification:true
         }
       })
       
@@ -140,7 +141,8 @@ export const preloadUser= async()=>{
           phone:users[i].phone,
           role:users[i].role,
           countryId:users[i].countryId,
-          cityId:users[i].cityId  
+          cityId:users[i].cityId,
+          verification:true
          }
       })
   
