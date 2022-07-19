@@ -14,7 +14,15 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({
       where: { email },
-      attributes: ["id", "name", "lastName", "email", "role", "password"],
+      attributes: [
+        "id",
+        "name",
+        "lastName",
+        "email",
+        "role",
+        "password",
+        "verification",
+      ],
     });
 
     if (!user) {
@@ -26,6 +34,11 @@ export const login = async (req, res) => {
 
     if (!checkPassword) {
       return res.status(401).send({ Error: "Password Incorrect" });
+    }
+    if (user.verification === false) {
+      return res
+        .status(401)
+        .send({ Error: "Usuario no veridicado, revise su email" });
     }
 
     user.set("password", undefined, { strict: false });
