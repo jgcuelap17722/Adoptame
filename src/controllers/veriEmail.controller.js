@@ -14,7 +14,7 @@ export const veriEmail = async (req, res) => {
       where: { email: email },
     });
     if (!busqueda) {
-      return res.status(400).json({ msg: "the email is not registered" });
+      return res.status(400).json({ error: "the email is not registered" });
     }
     if (busqueda.verification) {
       return res
