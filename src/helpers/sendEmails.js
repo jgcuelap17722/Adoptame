@@ -12,22 +12,17 @@ let transporter = nodemailer.createTransport({
     },
 });
 
-export const sendEmails = async (from, to, subject, html) => {
-    await transporter.sendMail({
-        from: `${from} <adoptaMe>`,
-        to: to,
-        subject: subject,
-        html: html,
-      });
-}
 
-export const autoMail = async (from, to, subject,titulo, info, button) => {
-    if (subject === undefined || !subject.length) {subject=from}
-    if (titulo === undefined || !titulo.length) {titulo=from}
+export const autoMail = async (header, toMail, subject,titulo, mensaje, {text, link}) => {
+
+    // let button = {text: texto, link: un link}
+
+    if (subject === undefined || !subject.length) {subject=header}
+    if (titulo === undefined || !titulo.length) {titulo=header}
     await transporter.sendMail({
-        from: `${from} <adoptaMe>`,
-        to: to,
+        from: `${header} <adoptaMe>`,
+        to: toMail,
         subject: subject,
-        html: html(titulo, info, button),
+        html: html(titulo, mensaje, {text, link}),
       });
 }
