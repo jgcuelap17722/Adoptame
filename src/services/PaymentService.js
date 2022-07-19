@@ -4,7 +4,7 @@ import "dotenv/config";
 const {
   MERCADOPAGO_ACCESS_TOKEN,
   ULR_DEPLOYED_FRONTEND,
-  URL_DEPLOYED_BACKEND
+  URL_DEPLOYED_BACKEND,
 } = process.env;
 
 export const newPreferentialPaymentService = async (dataBody) => {
