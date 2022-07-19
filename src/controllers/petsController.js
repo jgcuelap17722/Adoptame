@@ -164,7 +164,7 @@ export const createPets = async (req, res) => {
         castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
         attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes,
         environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
-        photos: imagenes_genericas,
+        photos: images,
       });
 
       // dependencies
