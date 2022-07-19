@@ -38,7 +38,7 @@ export const login = async (req, res) => {
     if (user.verification === false) {
       return res
         .status(401)
-        .send({ Error: "Usuario no veridicado, revise su email" });
+        .send({ Error: "Usuario no verificado, revise su email" });
     }
 
     user.set("password", undefined, { strict: false });
