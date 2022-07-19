@@ -5,6 +5,7 @@ import favouritePet from "./favouritePet.routes.js";
 import {
   getAllPets,
   getPetsById,
+  getPetsByIdUser,
   createPets,
   updatePets,
   deletePets,
@@ -18,11 +19,12 @@ router.use('/favourite', favouritePet)
 
 router.get("/", getAllPets);
 router.get("/:id", getPetsById);
+router.get("/user/:userId", getPetsByIdUser);
 router.post(
   "/",
-  authMiddleware,
+  /* authMiddleware, */
   upload.array("photos"),
-  validatorPets,
+  /* validatorPets, */
   createPets
 );
 router.put("/:id", authMiddleware, upload.array("photos"), updatePets);

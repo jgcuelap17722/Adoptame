@@ -4,7 +4,7 @@ import { TypePet } from '../models/Typepet.js';
 import { BreedPet } from '../models/Breedpet.js';
 import { ColorPet } from '../models/Colorpet.js';
 import { deleteFile } from '../middlewares/cloudinary.js';
-import { findAllPets, findByPkPets } from '../models/Views/pets.views.js';
+import { findAllPets, findByPkPets, findByUser } from '../models/Views/pets.views.js';
 import { favouritePetsByUser } from '../controllers/favouriteController.js';
 import { faker } from '@faker-js/faker';
 import axios from 'axios';
@@ -23,7 +23,17 @@ export const getPetsById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 }
-
+export const getPetsByIdUser = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  try {
+    const { userId } = req.params;
+    const petsByUserId = await findByUser(userId);
+    return res.status(200).json(petsByUserId)
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({ message: error.message });
+  }
+}
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
