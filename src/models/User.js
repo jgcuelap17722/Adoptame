@@ -59,6 +59,10 @@ export const User = sequelize.define(
       type: DataTypes.TEXT,
       defaultValue: null,
     },
+    starts: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: []
+    }
   },
   {
     timestamps: false,

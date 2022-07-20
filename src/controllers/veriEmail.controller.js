@@ -2,7 +2,6 @@ import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { encrypt } from "../helpers/handleBcrypt.js";
 import { autoMail } from "../helpers/sendEmails.js";
-
 const { URL_FRONT, JWT_SECRET } = process.env;
 const url = URL_FRONT || "localhost:5000";
 
