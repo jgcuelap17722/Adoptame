@@ -61,8 +61,12 @@ export const User = sequelize.define(
     },
     photo: {
       type: DataTypes.TEXT,
-  
     },
+    starts: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: []
+    }
+
   },
   {
     timestamps: false,
