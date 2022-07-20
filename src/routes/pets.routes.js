@@ -6,6 +6,7 @@ import {
   getAllPets,
   getPetsById,
   getPetsByIdUser,
+  getPetsFoundation,
   createPets,
   updatePets,
   deletePets,
@@ -18,13 +19,17 @@ const router = Router();
 router.use('/favourite', favouritePet)
 
 router.get("/", getAllPets);
-router.get("/:id", getPetsById);
+router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
+router.get("/nada", (req, res) => {
+  return res.send("fafafafa")
+});
+router.get("/:id", getPetsById);
 router.post(
   "/",
-  /* authMiddleware, */
+  authMiddleware,
   upload.array("photos"),
-  /* validatorPets, */
+  validatorPets,
   createPets
 );
 router.put("/:id", authMiddleware, upload.array("photos"), updatePets);

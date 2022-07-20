@@ -5,6 +5,7 @@ import { Pets } from "../models/Pets.js";
 import { User } from "../models/User.js";
 // import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
+import { findByUser } from '../models/Views/pets.views.js';
 
 /// POST USER
 export const createUser = async (req, res) => {
@@ -144,7 +145,7 @@ export const getDetailUser = async (req, res) => {
         { include: Solicitudes }
       );
       if (user) {
-        const pets = await Pets.findAll({ where: { userId: id } });
+        const pets = await findByUser(id);
         const city = await City.findByPk(user.cityId);
         const soli = await Solicitudes.findAll({ where: { userId: id } });
         const dataUser = {
@@ -158,7 +159,7 @@ export const getDetailUser = async (req, res) => {
           address: user.address,
           phone: user.phone,
           active: user.active,
-          verification:user.verification,
+          verification: user.verification,
           document: user.document,
           pets: pets.map((e) => e),
           solcitudes: soli.map((e) => e),

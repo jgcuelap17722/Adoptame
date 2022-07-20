@@ -11,6 +11,13 @@
     "http"
   ],
   "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
     "/api/v1.0/countries/": {
       "get": {
         "description": "",
@@ -241,6 +248,9 @@
         }
       },
       "put": {
+        "tags": [
+          "USER"
+        ],
         "description": "",
         "parameters": [
           {
@@ -297,6 +307,9 @@
     },
     "/api/v1.0/user/soli/{id}": {
       "put": {
+        "tags": [
+          "SOLICITUD"
+        ],
         "description": "",
         "parameters": [
           {
@@ -623,6 +636,58 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1.0/pets/user/{userId}": {
+      "get": {
+        "tags": [
+          "PETS"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1.0/pets/foundation": {
+      "get": {
+        "tags": [
+          "PETS"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1.0/pets/nada": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1121,9 +1186,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "4700": {
-            "description": ""
           }
         }
       },
