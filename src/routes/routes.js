@@ -26,6 +26,8 @@ import petsDataFake from "./petsDataFake.routes.js";
 import veriEmail from "./veriEmail.routes.js";
 import automail from "./autoMail.routes.js";
 
+import start from "./starts.routes.js";
+
 const router = Router();
 
 router.use('/countries', countries);
@@ -46,5 +48,7 @@ router.use("/auto", automail);
 router.use("/donations", donation);
 
 router.use("/fundations", fundation);
+
+router.use("/start", start)
 
 export default router;
