@@ -59,6 +59,10 @@ export const User = sequelize.define(
       type: DataTypes.TEXT,
       defaultValue: null,
     },
+    photo: {
+      type: DataTypes.TEXT,
+  
+    },
   },
   {
     timestamps: false,
