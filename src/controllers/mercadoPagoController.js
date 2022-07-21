@@ -1,8 +1,9 @@
+import { Country } from '../models/Country.js';
 import {
   newPreferentialPaymentService,
   getPaymentByIdService,
+  getPaymentsService,
 } from "../services/PaymentService.js";
-import { Country } from '../models/Country.js';
 
 export const createPreferentialPayment = async (req, res) => {
   try {
@@ -45,6 +46,19 @@ export const createPreferentialPayment = async (req, res) => {
       .json({ error: true, msg: "Failed to create payment" });
   }
 }
+
+export const getAllPayments = async (req, res) => {
+  try {
+    const payments = await getPaymentsService();
+    return res.json(payments);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: true, msg: "Failed to get payments" });
+  }
+}
+
 export const getPaymentById = async (req, res) => {
   try {
     const { idPayment } = req.params;
@@ -54,6 +68,6 @@ export const getPaymentById = async (req, res) => {
     console.log(error);
     return res
       .status(500)
-      .json({ error: true, msg: "Failed to get payments" });
+      .json({ error: true, msg: "Failed to get payment" });
   }
 }

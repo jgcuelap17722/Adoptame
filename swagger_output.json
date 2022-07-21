@@ -496,6 +496,58 @@
         }
       }
     },
+    "/api/v1.0/pets/foundation": {
+      "get": {
+        "tags": [
+          "PETS"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1.0/pets/user/{userId}": {
+      "get": {
+        "tags": [
+          "PETS"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1.0/pets/nada": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1.0/pets/{id}": {
       "get": {
         "tags": [
@@ -542,55 +594,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "typeId": {
-                  "example": "any"
-                },
-                "breedId": {
-                  "example": "any"
-                },
-                "coat": {
-                  "example": "any"
-                },
-                "specialCares": {
-                  "example": "any"
-                },
-                "castrated": {
-                  "example": "any"
-                },
-                "gender": {
-                  "example": "any"
-                },
-                "environment": {
-                  "example": "any"
-                },
-                "tags": {
-                  "example": "any"
-                },
-                "size": {
-                  "example": "any"
-                },
-                "age": {
-                  "example": "any"
-                },
-                "health": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                },
-                "status": {
-                  "example": "any"
-                },
-                "urlPhotosDb": {
-                  "example": "any"
-                },
-                "colorId": {
-                  "example": "any"
-                },
-                "attributes": {
+                "data": {
                   "example": "any"
                 }
               }
@@ -636,58 +640,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/api/v1.0/pets/user/{userId}": {
-      "get": {
-        "tags": [
-          "PETS"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/api/v1.0/pets/foundation": {
-      "get": {
-        "tags": [
-          "PETS"
-        ],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/v1.0/pets/nada": {
-      "get": {
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -792,19 +744,25 @@
     },
     "/api/v1.0/auth/userLogin": {
       "post": {
+        "tags": [
+          "LOGIN"
+        ],
         "description": "",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "description": "Iniciar session para obtener token",
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "test_user_80178606@testuser.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Test18@@"
                 }
               }
             }
@@ -1142,6 +1100,20 @@
         }
       }
     },
+    "/api/v1.0/donations/mercadopago": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/v1.0/donations/mercadopago/{idPayment}": {
       "get": {
         "description": "",
@@ -1165,6 +1137,9 @@
     },
     "/api/v1.0/donations/": {
       "post": {
+        "tags": [
+          "DONATION"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1190,6 +1165,9 @@
         }
       },
       "get": {
+        "tags": [
+          "DONATION"
+        ],
         "description": "",
         "parameters": [],
         "responses": {
@@ -1204,6 +1182,9 @@
     },
     "/api/v1.0/donations/{userId}": {
       "get": {
+        "tags": [
+          "DONATION"
+        ],
         "description": "",
         "parameters": [
           {
@@ -1233,6 +1214,61 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1.0/start/{id}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "punt": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }

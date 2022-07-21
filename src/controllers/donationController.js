@@ -1,13 +1,12 @@
 import { Donations } from '../models/Donations.js';
-import { getPaymentByIdService } from '../services/PaymentService.js';
+import { getPaymentByIdService, getPaymentsService } from '../services/PaymentService.js';
 import { autoMail } from '../helpers/sendEmails.js';
 
 export const createDonation = async (req, res) => {
+  // #swagger.tags = ['DONATION']
   try {
     const { data } = req.body;
-    console.log("req.body: ", req.body);
     const payment = await getPaymentByIdService(data.id);
-    console.log("payment: ", payment);
     if (payment) {
       const {
         id, // idPaymentMercadoPago
@@ -18,14 +17,8 @@ export const createDonation = async (req, res) => {
         transaction_details,
       } = payment;
 
-      console.log('metadata: ', metadata);
-      console.log('status: ', status);
-      console.log('status_detail: ', status_detail);
-      console.log('fee_details: ', fee_details);
-      console.log('transaction_details: ', transaction_details);
-
       const infoPayment = {
-        idPaymentMercadoPago:  id.toString(),
+        idPaymentMercadoPago: id.toString(),
         fromUserId: metadata.from_user.id,
         toUserId: metadata.to_user.id,
         status,
@@ -58,10 +51,73 @@ export const createDonation = async (req, res) => {
 }
 
 export const getDonationsById = async (req, res) => {
+  // #swagger.tags = ['DONATION']
   try {
     const { userId } = req.params;
+    const paymentsMercadoPago = await getPaymentsService();
+
+    const foundationDonations = await Donations.findAll({
+      attributes: ["idPaymentMercadoPago", "status", "id"],
+      where: {
+        toUserId: userId
+      }
+    })
+
+    const updateStatusDonations = foundationDonations.map((donation) => {
+      const paymentMercadoPago = paymentsMercadoPago.find(payment => payment.id == donation.idPaymentMercadoPago)
+
+      if (donation.status !== paymentMercadoPago.status) {
+        switch (paymentMercadoPago.status) {
+          case 'in_process':
+            return Donations.update({
+              status: paymentMercadoPago.status
+            }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+              returning: true,
+              plain: true,
+            })
+          case 'rejected':
+            return Donations.update({
+              status: paymentMercadoPago.status
+            }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+              returning: true,
+              plain: true,
+            })
+          case 'approved':
+            return Donations.update({
+              status: paymentMercadoPago.status,
+              status_detail: paymentMercadoPago.status_detail,
+              comision_amount: paymentMercadoPago.fee_details[0]?.amount ?? 0,
+              acredit_amount: paymentMercadoPago.transaction_details.net_received_amount,
+              total_amount: paymentMercadoPago.transaction_details.total_paid_amount,
+            }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+              returning: true,
+              plain: true,
+            })
+          default:
+            break;
+        }
+      }
+
+      return Donations.findOne({
+        attributes: { exclude: ['idPaymentMercadoPago'] },
+        where: {
+          id: donation.id
+        }
+      })
+    });
+
+    await Promise.all(updateStatusDonations);
     const donations = await Donations.findAll({
-      attributes: { exclude: ['idPaymentMercadoPago']},
+      attributes: { exclude: ['idPaymentMercadoPago'] },
       where: {
         toUserId: userId
       }
@@ -73,8 +129,11 @@ export const getDonationsById = async (req, res) => {
 }
 
 export const getDonations = async (req, res) => {
+  // #swagger.tags = ['DONATION']
   try {
-    const donations = await Donations.findAll();
+    const donations = await Donations.findAll({
+      attributes: { exclude: ['idPaymentMercadoPago'] }
+    });
     return res.status(200).json(donations);
   } catch (error) {
     return res.status(400).json({ message: error.message });

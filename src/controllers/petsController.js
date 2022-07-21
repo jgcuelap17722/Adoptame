@@ -12,10 +12,10 @@ import axios from 'axios';
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { id } = req.params;
+    const { petId } = req.params;
 
-    if (id) {
-      const detailPet = await findByPkPets(id);
+    if (petId) {
+      const detailPet = await findByPkPets(petId);
       return res.status(200).json(detailPet);
     }
 
@@ -23,6 +23,7 @@ export const getPetsById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 }
+
 export const getPetsByIdUser = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
@@ -34,6 +35,7 @@ export const getPetsByIdUser = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 }
+
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
@@ -160,14 +162,6 @@ export const createPets = async (req, res) => {
       photosCats.push(faker.image.cats());
     }
 
-    let photosDogs = [];
-    for (let index = 0; index < resultPhotos; index++) {
-      let { data } = await axios.get('https://dog.ceo/api/breeds/image/random');
-      let urlImageDog = await data.message;
-      photosDogs.push(urlImageDog);
-    }
-    const imagenes_genericas = faker.helpers.arrayElements(type.id === 'gato' ? photosCats : photosDogs, resultPhotos);
-
     if (user) {
       const newPet = await Pets.create({
         name,
@@ -215,7 +209,9 @@ export const updatePets = async (req, res) => {
     ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
     : [];
   try {
-    const { id } = req.params;
+    const { data } = req.body;
+    const { petId } = req.params;
+    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -234,9 +230,9 @@ export const updatePets = async (req, res) => {
       urlPhotosDb,
       colorId,
       attributes,
-    } = req.body;
+    } = infoPets;
 
-    const pet = await Pets.findByPk(id);
+    const pet = await Pets.findByPk(petId);
     const breed = await BreedPet.findByPk(breedId);
     const type = await TypePet.findByPk(typeId);
     const color = await ColorPet.findByPk(colorId);
@@ -273,7 +269,7 @@ export const updatePets = async (req, res) => {
         attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes
       }, {
         where: {
-          id
+          id: petId
         },
         returning: true,
         plain: true,
@@ -305,14 +301,14 @@ export const updatePets = async (req, res) => {
 export const deletePets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { id } = req.params;
-    const pet = await Pets.findByPk(id);
+    const { petId } = req.params;
+    const pet = await Pets.findByPk(petId);
     if (pet) {
       await Pets.update({
         status: "adopted",
       }, {
         where: {
-          id
+          id: petId
         }
       });
       return res.status(200).json({ message: "successfully removed" });

@@ -10,6 +10,17 @@ import { tokenSing } from "../helpers/handleJwt.js";
  */
 
 export const login = async (req, res) => {
+  /*
+  #swagger.tags = ['LOGIN']
+  #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'Iniciar session para obtener token',
+      schema: {
+        email: "test_user_80178606@testuser.com",
+        password: "Test18@@",
+      }
+  }
+  */
   try {
     const { email, password } = req.body;
     const user = await User.findOne({
