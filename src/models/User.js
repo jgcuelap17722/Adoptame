@@ -100,13 +100,19 @@ User.belongsTo(City, {
 });
 
 Pets.belongsToMany(User, {
-  through: UserPetsFavourite,
+  through: {
+    model: UserPetsFavourite,
+    unique: false
+  },
   foreignKey: "userId",
   targetId: "id"
 });
 
 User.belongsToMany(Pets, {
-  through: UserPetsFavourite,
+  through: {
+    model: UserPetsFavourite,
+    unique: false
+  },
   foreignKey: "petId",
   targetId: "id"
 });
