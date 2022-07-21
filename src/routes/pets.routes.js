@@ -17,12 +17,12 @@ import { authMiddleware } from "../middlewares/session.js";
 const router = Router();
 
 router.use('/favourite', favouritePet)
+router.get("/foundation", getPetsFoundation);
 
 router.get("/", getAllPets);
-router.get("/foundation", getPetsFoundation);
+router.get("/:petId", getPetsById);
 router.get("/user/:userId", getPetsByIdUser);
 
-router.get("/:id", getPetsById);
 router.post(
   "/",
   authMiddleware,
@@ -30,7 +30,7 @@ router.post(
   validatorPets,
   createPets
 );
-router.put("/:id", authMiddleware, upload.array("photos"), updatePets);
-router.delete("/:id", authMiddleware, deletePets);
+router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
+router.delete("/:petId", authMiddleware, deletePets);
 
 export default router;
