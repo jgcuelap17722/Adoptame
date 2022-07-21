@@ -10,6 +10,7 @@ export const Donations = sequelize.define('donations', {
   idPaymentMercadoPago: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true
   },
   date: {
     type: DataTypes.DATE,

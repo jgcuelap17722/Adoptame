@@ -21,9 +21,7 @@ router.use('/favourite', favouritePet)
 router.get("/", getAllPets);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
-router.get("/nada", (req, res) => {
-  return res.send("fafafafa")
-});
+
 router.get("/:id", getPetsById);
 router.post(
   "/",
