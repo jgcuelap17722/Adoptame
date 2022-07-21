@@ -5,6 +5,7 @@ import { User } from "../models/User.js";
 import { findAllUsers, findUserById } from "../models/Views/users.views.js";
 // import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
+import { findByUser } from '../models/Views/pets.views.js';
 
 /// POST USER
 export const createUser = async (req, res) => {

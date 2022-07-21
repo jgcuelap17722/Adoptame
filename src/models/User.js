@@ -59,10 +59,14 @@ export const User = sequelize.define(
       type: DataTypes.TEXT,
       defaultValue: null,
     },
+    photo: {
+      type: DataTypes.TEXT,
+    },
     starts: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       defaultValue: []
     }
+
   },
   {
     timestamps: false,
@@ -96,14 +100,20 @@ User.belongsTo(City, {
 });
 
 Pets.belongsToMany(User, {
-  through: UserPetsFavourite,
-  foreignKey: "userId",
+  through: {
+    model: UserPetsFavourite,
+    unique: false
+  },
+  foreignKey: "petId",
   targetId: "id"
 });
 
 User.belongsToMany(Pets, {
-  through: UserPetsFavourite,
-  foreignKey: "petId",
+  through: {
+    model: UserPetsFavourite,
+    unique: false
+  },
+  foreignKey: "userId",
   targetId: "id"
 });
 

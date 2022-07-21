@@ -114,7 +114,8 @@ export const preloadFundations= async()=>{
           role:"fundation",
           countryId:organizations[i].address.country,
           cityId:organizations[i].address.city,
-          verification:true
+          verification:true,
+          photo:organizations[i].photos.full
         }
       })
       
