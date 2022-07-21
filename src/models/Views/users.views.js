@@ -38,17 +38,18 @@ export const findUserById = async (id) => {
   }
 };
 
+export const getCountry = async (id) => {
+  const country = await Country.findByPk(id);
+  return country.name;
+};
+
+export const getCity = async (id) => {
+  const city = await City.findByPk(id);
+  return city.name;
+};
+
 export const findAllUsers = async () => {
   const users = await User.findAll();
-  const getCountry = async (id) => {
-    const country = await Country.findByPk(id);
-    return country.name;
-  };
-
-  const getCity = async (id) => {
-    const city = await City.findByPk(id);
-    return city.name;
-  };
   const dataUsers = await Promise.all(
     users.map(async (user) => {
       return {
