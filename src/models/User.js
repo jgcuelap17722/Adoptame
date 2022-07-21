@@ -104,7 +104,7 @@ Pets.belongsToMany(User, {
     model: UserPetsFavourite,
     unique: false
   },
-  foreignKey: "userId",
+  foreignKey: "petId",
   targetId: "id"
 });
 
@@ -113,7 +113,7 @@ User.belongsToMany(Pets, {
     model: UserPetsFavourite,
     unique: false
   },
-  foreignKey: "petId",
+  foreignKey: "userId",
   targetId: "id"
 });
 
