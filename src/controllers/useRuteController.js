@@ -1,8 +1,8 @@
 import { encrypt, compare } from "../helpers/handleBcrypt.js";
 import { City } from "../models/City.js";
 import { Country } from "../models/Country.js";
-import { Pets } from "../models/Pets.js";
 import { User } from "../models/User.js";
+import { findAllUsers, findUserById } from "../models/Views/users.views.js";
 // import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
 
@@ -26,7 +26,7 @@ export const createUser = async (req, res) => {
     address,
     phone,
     role,
-    document
+    document,
   } = req.body;
   try {
     const user = await User.findOne({
@@ -49,7 +49,7 @@ export const createUser = async (req, res) => {
               email,
               role,
               active: false,
-              document: document
+              document: document,
             });
             //password set in undefined for security
             userFundation.set("password", undefined, { strict: false });
@@ -115,18 +115,8 @@ export const createUser = async (req, res) => {
 export const getUser = async (req, res) => {
   // #swagger.tags = ['USER']
   try {
-    let userFundation = await User.findAll({
-      attributes: {
-        exclude: ["password"],
-      },
-      include: {
-        model: Solicitudes,
-        attributes: {
-          exclude: ["updatedAt", "createdAt"],
-        },
-      },
-    });
-    return res.send(userFundation);
+    const users = await findAllUsers();
+    return res.send(users);
   } catch (error) {
     return res.json({ message: error.message });
   }
@@ -137,64 +127,13 @@ export const getDetailUser = async (req, res) => {
   // #swagger.tags = ['USER']
   const { id } = req.params;
   try {
-    if (id) {
-      const user = await User.findByPk(
-        id,
-        { include: Pets },
-        { include: Solicitudes }
-      );
-      if (user) {
-        const pets = await Pets.findAll({ where: { userId: id } });
-        const city = await City.findByPk(user.cityId);
-        const soli = await Solicitudes.findAll({ where: { userId: id } });
-        const dataUser = {
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          donaciones: user.donaciones,
-          country: user.countryId,
-          city: city.name,
-          address: user.address,
-          phone: user.phone,
-          active: user.active,
-          verification:user.verification,
-          document: user.document,
-          pets: pets.map((e) => e),
-          solcitudes: soli.map((e) => e),
-        };
-
-        return res.send(dataUser);
-      } else {
-        return res.status(400).json({ error: "User Not Found" });
-      }
-    }
+      const dataUser = await findUserById(id);
+      return res.send(dataUser);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-const userDetail = async (id) => {
-  const user = await User.findByPk(id);
-  if (user) {
-    const city = await City.findByPk(user.cityId);
-    const country = await Country.findByPk(user.countryId);
-    const dataUser = {
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      country: country.name,
-      city: city.name,
-      address: user.address,
-      phone: user.phone,
-      active: user.active,
-    };
-    return dataUser;
-  } else {
-    return { error: "User Not Found" };
-  }
-};
 //UPDATE USER
 export const updateUser = async (req, res) => {
   // #swagger.tags = ['USER']
