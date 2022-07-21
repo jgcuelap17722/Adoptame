@@ -11,7 +11,6 @@ import {
   updatePets,
   deletePets,
 } from "../controllers/petsController.js";
-import validatorPets from "../middlewares/validatorPets.js";
 import { authMiddleware } from "../middlewares/session.js";
 
 const router = Router();
@@ -27,7 +26,6 @@ router.post(
   "/",
   authMiddleware,
   upload.array("photos"),
-  validatorPets,
   createPets
 );
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);

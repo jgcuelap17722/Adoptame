@@ -7,7 +7,6 @@ import { deleteFile } from '../middlewares/cloudinary.js';
 import { findAllPets, findByPkPets, findByUser, findByFoundation } from '../models/Views/pets.views.js';
 import { favouritePetsByUser } from '../controllers/favouriteController.js';
 import { faker } from '@faker-js/faker';
-import axios from 'axios';
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -196,6 +195,7 @@ export const createPets = async (req, res) => {
     idFiles.forEach(idFile => {
       deleteFile(idFile);
     });
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 }
