@@ -76,15 +76,19 @@ export const DeleteMatch = async (req,res)=>{
 const {id}= req.params
   try {
     if(id){
-      await Match.destroy({where:{
-        id:id
-      }})
-      res.json({message:"Match eliminado"})
+        const match= await Match.findOne({where:{id:id}})
+        if(!match){
+            res.json({message:"no se encotro el id de este match en la base de datos"})
+      
     }else{
-        res.json({message:"no se encotro el id de este match en la base de datos"})
+        await Match.destroy({where:{
+            id:id
+          }})
+          res.json({message:"Match eliminado"})
+            }
     }
   } catch (error) {
-    
+    res.json({message:error})
   }
 
 }
