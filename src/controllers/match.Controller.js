@@ -15,7 +15,13 @@ export const matchPet =  async (req,res)=>{
     const dataToken = await verifyToken(token);
     const UserData= await User.findByPk(dataToken.id);
     if(UserData){
-      const match=  await Match.create({
+           const verifMatch= await Match.findOne({where:{userId:UserData.id}})
+           if(verifMatch){
+            res.status(404).json({
+                message: "Ya tienes un match",
+              });
+           }else{
+       await Match.create({
         age,
         coat,
         genre,
@@ -24,12 +30,12 @@ export const matchPet =  async (req,res)=>{
         type,
         userId:UserData.id  
         })  
-       
-       res.json({
-        message: "Match Created Successfully!",
-      });
+       return res.json({
+            message: "Match Created Successfully!",
+          });
+        }
     }else{
-        res.json("User not found")
+        res.json({error:"Porfavor vuelve a loguearte"})
     }
      
     } catch (error) {     
@@ -64,4 +70,21 @@ export const PutMachUser = async (req,res) =>{
     } catch (error) {
         console.log(error)
     }
+}
+//DELETE DE MATCH PARA PRUEBA EN EL FRONT 
+export const DeleteMatch = async (req,res)=>{
+const {id}= req.params
+  try {
+    if(id){
+      await Match.destroy({where:{
+        id:id
+      }})
+      res.json({message:"Match eliminado"})
+    }else{
+        res.json({message:"no se encotro el id de este match en la base de datos"})
+    }
+  } catch (error) {
+    
+  }
+
 }
