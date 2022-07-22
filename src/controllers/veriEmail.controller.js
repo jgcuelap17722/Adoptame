@@ -13,8 +13,8 @@ export const veriEmail = async (req, res) => {
       let busqueda = await User.findOne({
           where:{email:email}
         })
-        if (!busqueda) {return res.status(400).json({msg: "the email is not registered"})}
-        if (busqueda.verification) {return res.status(400).json({msg: "the email not required verification"})}
+        if (!busqueda) {return res.status(400).json({error: "the email is not registered"})}
+        if (busqueda.verification) {return res.status(400).json({error: "the email not required verification"})}
         if (!(busqueda.verification)) {
 
            //let token = tokenSing(user);
@@ -57,7 +57,7 @@ export const logVerify = async (req, res) => {
             where:{id:info.id}
           })
         
-          if (!busqueda) {res.json({msg: "verification fail"})}
+          if (!busqueda) {res.json({error: "verification fail"})}
 
           await User.update({verification: true}, {where: {id: info.id}})
 
@@ -74,7 +74,7 @@ export const petiPass = async (req, res) => {
       let busqueda = await User.findOne({
           where:{email:email}
         })
-        if (!busqueda) {res.status(400).json({msg: "the email is not registered"})}
+        if (!busqueda) {res.status(400).json({error: "the email is not registered"})}
         
         // let token = tokenSing(busqueda)
         let token = jwt.sign(

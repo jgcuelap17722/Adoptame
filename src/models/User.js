@@ -5,6 +5,7 @@ import { Country } from "./Country.js";
 import { Pets } from "./Pets.js";
 import { UserPetsFavourite } from './FavouritePet.js';
 import { Donations } from './Donations.js';
+import { Coments } from "./comentsUser.js";
 
 export const User = sequelize.define(
   "user",
@@ -60,6 +61,14 @@ export const User = sequelize.define(
       defaultValue: null,
     },
     starts: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: []
+    },
+    comentario: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: []
+    },
+    points: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       defaultValue: []
     }
@@ -122,4 +131,13 @@ User.belongsToMany(User, {
   },
   as: "to",
   foreignKey: "toUserId",
+});
+User.hasMany(Coments, {
+  foreignKey: "userId",
+  sourceKey: "id",
+});
+
+Coments.belongsTo(User, {
+  foreignKey: "userId",
+  targetId: "id",
 });

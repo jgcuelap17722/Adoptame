@@ -28,6 +28,7 @@ import automail from "./autoMail.routes.js";
 
 import start from "./starts.routes.js";
 
+
 const router = Router();
 
 router.use('/countries', countries);
