@@ -10,15 +10,11 @@ export const Match = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    type: {
+    age:  {
       type: DataTypes.STRING,
       defaultValue : null
     },
-    size:{
-        type: DataTypes.STRING,
-        defaultValue : null
-    },
-    haTenidoMascota:{
+    coat:{
         type: DataTypes.STRING,
         defaultValue : null
     },
@@ -26,18 +22,19 @@ export const Match = sequelize.define(
         type: DataTypes.STRING,
         defaultValue : null
     },
-    gender:{
+    haTenidoMascota:{
         type: DataTypes.STRING,
         defaultValue : null
     },
-    coat:{
+    size:{
         type: DataTypes.STRING,
         defaultValue : null
     },
-    age:{
+    type:{
         type: DataTypes.STRING,
         defaultValue : null
     },
+   
  
   },
   {
