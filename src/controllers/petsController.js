@@ -79,8 +79,8 @@ export const getPetsFoundation = async (req, res) => {
     /* const { idFundation } = req.params; */
 
     /* if (idFundation) { */
-      const detailPet = await findByFoundation()
-      return res.status(200).json(detailPet);
+    const detailPet = await findByFoundation()
+    return res.status(200).json(detailPet);
     /* } */
 
   } catch (error) {
@@ -213,29 +213,32 @@ export const updatePets = async (req, res) => {
     const { petId } = req.params;
     const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
-      name,
+      name,// SI
       typeId,
-      breedId,
+      breedId, // SI
       coat,
       specialCares,
-      castrated,
+      castrated, // SI
       gender,
-      environment,
+      environment, // SI
       tags,
       size,
       age,
-      health,
-      description,
+      health, // SI
+      description, // SI
       status,
-      urlPhotosDb,
+      urlPhotosDb, // SI
       colorId,
       attributes,
     } = infoPets;
 
     const pet = await Pets.findByPk(petId);
-    const breed = await BreedPet.findByPk(breedId);
-    const type = await TypePet.findByPk(typeId);
-    const color = await ColorPet.findByPk(colorId);
+    const breed = await BreedPet.findByPk(breedId ? breedId: pet.breedId);
+    const type = await TypePet.findByPk(typeId ? typeId : pet.typeId );
+    const color = await ColorPet.findByPk(colorId ? colorId : pet.colorId);
+
+    console.log('pet: ', pet);
+    console.log('infoPets: ', infoPets);
 
     const urlsDb = urlPhotosDb === "" ? [] : urlPhotosDb;
 
@@ -252,21 +255,20 @@ export const updatePets = async (req, res) => {
       });
 
       const petUpdated = await Pets.update({
-        name,
-        coat,
-        specialCares: typeof specialCares === "boolean" ? specialCares : specialCares == "true",
-        castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
-        gender,
-        environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
-        tags,
-        size,
-        color,
-        age,
-        health,
-        description,
+        name: name ? name : pet.name,
+        coat: coat ? coat : pet.coat,
+        specialCares: (specialCares && (typeof specialCares === "boolean" || specialCares == "true")) ?? pet.specialCares,
+        castrated: (castrated && (typeof castrated === "boolean" || castrated == "true")) ?? pet.castrated,
+        gender: gender ? gender : pet.gender,
+        environment: (typeof environment === 'object' ? JSON.stringify(environment) : environment) ?? JSON.stringify(pet.environment),
+        tags: tags ? tags : pet.tags,
+        size: size ? size : pet.size,
+        age: age ? age : pet.age,
+        health: health ? health : pet.health,
+        description: description ? description : pet.description,
         photos: urlsDb.concat(imageUploadUrls),
-        status,
-        attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes
+        status: status ? status : pet.status,
+        attributes: (typeof attributes === 'object' ? JSON.stringify(attributes) : attributes) ?? JSON.stringify(pet.attributes)
       }, {
         where: {
           id: petId
@@ -277,8 +279,9 @@ export const updatePets = async (req, res) => {
 
       await pet.setTypepet(type);
       await pet.setBreedpet(breed);
+      await pet.setColorpet(color);
 
-      petUpdated[1].dataValues.environment = JSON.parse(petUpdated[1].dataValues.environment)
+      // petUpdated[1].dataValues.environment = JSON.parse(petUpdated[1].dataValues.environment)
       const detailPetUpdated = await findByPkPets(petUpdated[1].dataValues.id);
       return res.status(201).json({ data: detailPetUpdated, message: 'successfully updated pet' });
     }
@@ -287,12 +290,13 @@ export const updatePets = async (req, res) => {
       deleteFile(idFile);
     });
 
-    return res.status(400).json({ message: "pet invalid" });
+    return res.status(400).json({ message: "the pet is adopted¡" });
 
   } catch (error) {
     imageUploadUrls.length && idUploadImages.forEach(idFile => {
       deleteFile(idFile);
     });
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 
