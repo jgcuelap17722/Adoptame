@@ -4,23 +4,34 @@ import { TypePet } from '../models/Typepet.js';
 import { BreedPet } from '../models/Breedpet.js';
 import { ColorPet } from '../models/Colorpet.js';
 import { deleteFile } from '../middlewares/cloudinary.js';
-import { findAllPets, findByPkPets } from '../models/Views/pets.views.js';
+import { findAllPets, findByPkPets, findByUser, findByFoundation } from '../models/Views/pets.views.js';
 import { favouritePetsByUser } from '../controllers/favouriteController.js';
 import { faker } from '@faker-js/faker';
-import axios from 'axios';
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { id } = req.params;
+    const { petId } = req.params;
 
-    if (id) {
-      const detailPet = await findByPkPets(id);
+    if (petId) {
+      const detailPet = await findByPkPets(petId);
       return res.status(200).json(detailPet);
     }
 
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+}
+
+export const getPetsByIdUser = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  try {
+    const { userId } = req.params;
+    const petsByUserId = await findByUser(userId);
+    return res.status(200).json(petsByUserId)
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({ message: error.message });
   }
 }
 
@@ -57,6 +68,21 @@ export const getAllPets = async (req, res) => {
     }
     const allPets = await findAllPets();
     return res.status(200).json(allPets);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export const getPetsFoundation = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  try {
+    /* const { idFundation } = req.params; */
+
+    /* if (idFundation) { */
+      const detailPet = await findByFoundation()
+      return res.status(200).json(detailPet);
+    /* } */
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -103,6 +129,8 @@ export const createPets = async (req, res) => {
     ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
     : [];
   try {
+    const { data } = req.body;
+    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -119,7 +147,7 @@ export const createPets = async (req, res) => {
       attributes,
       environment,
       userId
-    } = req.body;
+    } = infoPets;
 
     const user = await User.findByPk(userId);
     const type = await TypePet.findByPk(typeId);
@@ -132,14 +160,6 @@ export const createPets = async (req, res) => {
     for (let index = 0; index < resultPhotos; index++) {
       photosCats.push(faker.image.cats());
     }
-
-    let photosDogs = [];
-    for (let index = 0; index < resultPhotos; index++) {
-      let { data } = await axios.get('https://dog.ceo/api/breeds/image/random');
-      let urlImageDog = await data.message;
-      photosDogs.push(urlImageDog);
-    }
-    const imagenes_genericas = faker.helpers.arrayElements(type.id === 'gato' ? photosCats : photosDogs, resultPhotos);
 
     if (user) {
       const newPet = await Pets.create({
@@ -154,7 +174,7 @@ export const createPets = async (req, res) => {
         castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
         attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes,
         environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
-        photos: imagenes_genericas,
+        photos: images,
       });
 
       // dependencies
@@ -175,6 +195,7 @@ export const createPets = async (req, res) => {
     idFiles.forEach(idFile => {
       deleteFile(idFile);
     });
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 }
@@ -188,7 +209,9 @@ export const updatePets = async (req, res) => {
     ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
     : [];
   try {
-    const { id } = req.params;
+    const { data } = req.body;
+    const { petId } = req.params;
+    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -207,9 +230,9 @@ export const updatePets = async (req, res) => {
       urlPhotosDb,
       colorId,
       attributes,
-    } = req.body;
+    } = infoPets;
 
-    const pet = await Pets.findByPk(id);
+    const pet = await Pets.findByPk(petId);
     const breed = await BreedPet.findByPk(breedId);
     const type = await TypePet.findByPk(typeId);
     const color = await ColorPet.findByPk(colorId);
@@ -246,7 +269,7 @@ export const updatePets = async (req, res) => {
         attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes
       }, {
         where: {
-          id
+          id: petId
         },
         returning: true,
         plain: true,
@@ -278,14 +301,14 @@ export const updatePets = async (req, res) => {
 export const deletePets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { id } = req.params;
-    const pet = await Pets.findByPk(id);
+    const { petId } = req.params;
+    const pet = await Pets.findByPk(petId);
     if (pet) {
       await Pets.update({
         status: "adopted",
       }, {
         where: {
-          id
+          id: petId
         }
       });
       return res.status(200).json({ message: "successfully removed" });

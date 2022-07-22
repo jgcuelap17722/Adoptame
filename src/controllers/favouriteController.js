@@ -2,6 +2,7 @@ import { UserPetsFavourite } from '../models/FavouritePet.js';
 import { findAllPets, findByPkPets } from '../models/Views/pets.views.js';
 
 export const favouritePetsByUser = async (userId) => {
+  // #swagger.tags = ['PETS/FAVOURITE']
   try {
     if (userId) {
       const petsFavorites = await UserPetsFavourite.findAll({
