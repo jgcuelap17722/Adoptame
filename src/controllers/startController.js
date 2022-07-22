@@ -37,7 +37,7 @@ export const prop = async (req, res) => {
    usId: "usuarioId"
    }
    */
-    const { id, usId  } = req.body
+    const { id, userId  } = req.body
     const {msg} = req.body;
 
     const fund = await User.findOne({
@@ -46,17 +46,17 @@ export const prop = async (req, res) => {
         },
       });
       //let tok = jwt.decode(token)
-      console.log(tok)
+      //console.log(tok)
       try { 
       // if(!tok.id) {return res.status(400).json({error : "error de token"})}
         let coments = understand(id);
-        let comb = (usId) => {for (let i = 0; i < coments.length; i++) {
+        let comb = (userId) => {for (let i = 0; i < coments.length; i++) {
           const coment = coments[i];
           if (coment.id === usId) {return true}
         }
         return false}
-        if(comb(usId)) {return res.status(400).json({error : "esta cuenta ya ha comentado"})}
-        const userComentId = await User.findByPk(tok.id);
+        if(comb(userId)) {return res.status(400).json({error : "esta cuenta ya ha comentado"})}
+        const userComentId = await User.findByPk(userId);
         const createComent = await Coments.create(
             {
               comentario: msg.coment
