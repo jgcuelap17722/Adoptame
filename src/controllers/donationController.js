@@ -1,6 +1,7 @@
 import { Donations } from '../models/Donations.js';
 import { getPaymentByIdService, getPaymentsService } from '../services/PaymentService.js';
 import { autoMail } from '../helpers/sendEmails.js';
+import { User } from '../models/User.js';
 
 export const createDonation = async (req, res) => {
   // #swagger.tags = ['DONATION']
@@ -28,8 +29,11 @@ export const createDonation = async (req, res) => {
         total_amount: transaction_details.total_paid_amount,
       }
 
+      const userFundation = await User.findByPk(metadata.to_user.id)
+
       switch (status) {
         case 'approved':
+          autoMail('Donacion nueva', userFundation.email, "Nueva donacion")
           const newApprovedDonation = await Donations.create(infoPayment);
           return res.status(201).json({ data: newApprovedDonation, message: "successfully donated" })
         case 'in_process':
