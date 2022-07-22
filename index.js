@@ -7,7 +7,7 @@ import "./src/models/Typepet.js";
 import "./src/models/Breedpet.js";
 import "./src/models/Colorpet.js";
 import "./src/models/Solicitudes.js";
-
+import "./src/models/Match.js"
 import {
   preloadCountrys,
   preloadTypesPets,
