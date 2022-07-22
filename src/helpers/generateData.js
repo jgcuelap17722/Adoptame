@@ -1,11 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { typesPets } from '../database/typePets.js';
 import pets from '../database/pets.js';
 
-import axios from 'axios';
-
 export const generateDataPets = async (results, ids) => {
-  
+
   let data = [];
 
   const petsGenerated = async () => {
@@ -71,19 +68,6 @@ export const generateDataPets = async (results, ids) => {
         (type === 'perro' && genders === 'macho') ? faker.helpers.arrayElement(names.perro.macho) :
           (type === 'perro' && genders === 'hembra') ? faker.helpers.arrayElement(names.perro.hembra) : "Error"
 
-    let resultPhotos = faker.datatype.number({ min: 1, max: 5 });
-    let photosCats = [];
-    for (let index = 0; index < resultPhotos; index++) {
-      photosCats.push(faker.image.cats());
-    }
-
-    let photosDogs = [];
-    for (let index = 0; index < resultPhotos; index++) {
-      let { data } = await axios.get('https://dog.ceo/api/breeds/image/random');
-      let urlImageDog = await data.message;
-      photosDogs.push(urlImageDog);
-    }
-
     return {
       userId: faker.helpers.arrayElement(ids),
       name: name,
@@ -108,14 +92,13 @@ export const generateDataPets = async (results, ids) => {
         cats: faker.helpers.arrayElement([true, false, null]),
       }])),
       status: faker.helpers.arrayElement(pets[0].status),
-      photos: faker.helpers.arrayElements(type === 'gato' ? photosCats : photosDogs, resultPhotos),
+      photos: faker.helpers.arrayElement(type === 'gato' ? pets[0].photos : pets[1].photos),
     };
   }
 
   for (let i = 0; i < results; i++) {
     data.push(await petsGenerated());
   }
-  console.log(`Se insertó: ${results} mascotas: `);
   return data;
 };
 

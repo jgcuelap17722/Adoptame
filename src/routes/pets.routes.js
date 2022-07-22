@@ -5,27 +5,30 @@ import favouritePet from "./favouritePet.routes.js";
 import {
   getAllPets,
   getPetsById,
+  getPetsByIdUser,
+  getPetsFoundation,
   createPets,
   updatePets,
   deletePets,
 } from "../controllers/petsController.js";
-import validatorPets from "../middlewares/validatorPets.js";
 import { authMiddleware } from "../middlewares/session.js";
 
 const router = Router();
 
 router.use('/favourite', favouritePet)
+router.get("/foundation", getPetsFoundation);
 
 router.get("/", getAllPets);
-router.get("/:id", getPetsById);
+router.get("/:petId", getPetsById);
+router.get("/user/:userId", getPetsByIdUser);
+
 router.post(
   "/",
   authMiddleware,
   upload.array("photos"),
-  validatorPets,
   createPets
 );
-router.put("/:id", authMiddleware, upload.array("photos"), updatePets);
-router.delete("/:id", authMiddleware, deletePets);
+router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
+router.delete("/:petId", authMiddleware, deletePets);
 
 export default router;
