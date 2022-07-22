@@ -27,6 +27,7 @@ import veriEmail from "./veriEmail.routes.js";
 import automail from "./autoMail.routes.js";
 
 import start from "./starts.routes.js";
+import match from "./match.routes.js"
 
 
 const router = Router();
@@ -51,5 +52,6 @@ router.use("/donations", donation);
 router.use("/fundations", fundation);
 
 router.use("/start", start)
+router.use('/match', match)
 
 export default router;

@@ -3,18 +3,21 @@ import { Solicitudes } from "../Solicitudes.js";
 import { Country } from "../Country.js";
 import { City } from "../City.js";
 import { Pets } from "../Pets.js";
+import { Match } from "../Match.js";
 
 export const findUserById = async (id) => {
   const user = await User.findByPk(
     id,
     { include: Pets },
-    { include: Solicitudes }
+    { include: Solicitudes },
+    {include: Match}
   );
   if (user) {
     const pets = await Pets.findAll({ where: { userId: id } });
     const city = await City.findByPk(user.cityId);
     const country = await Country.findByPk(user.countryId);
     const soli = await Solicitudes.findAll({ where: { userId: id } });
+    const macth= await Match.findOne({where: {userId:id}})
     const dataUser = {
       name: user.name,
       lastName: user.lastName,
@@ -30,6 +33,7 @@ export const findUserById = async (id) => {
       document: user.document,
       pets: pets.map((e) => e),
       solicitudes: soli.map((e) => e),
+      match:macth
     };
 
     return dataUser;
