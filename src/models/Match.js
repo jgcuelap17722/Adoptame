@@ -34,6 +34,8 @@ export const Match = sequelize.define(
         type: DataTypes.STRING,
         defaultValue : null
     },
+
+    
    
  
   },
