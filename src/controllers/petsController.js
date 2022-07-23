@@ -1,12 +1,19 @@
-import { Pets } from '../models/Pets.js';
-import { User } from '../models/User.js';
-import { TypePet } from '../models/Typepet.js';
-import { BreedPet } from '../models/Breedpet.js';
-import { ColorPet } from '../models/Colorpet.js';
-import { deleteFile } from '../middlewares/cloudinary.js';
-import { findAllPets, findByPkPets, findByUser, findByFoundation } from '../models/Views/pets.views.js';
-import { favouritePetsByUser } from '../controllers/favouriteController.js';
-import { faker } from '@faker-js/faker';
+import { Pets } from "../models/Pets.js";
+import { User } from "../models/User.js";
+import { TypePet } from "../models/Typepet.js";
+import { BreedPet } from "../models/Breedpet.js";
+import { ColorPet } from "../models/Colorpet.js";
+import { deleteFile } from "../middlewares/cloudinary.js";
+import {
+  findAllPets,
+  findByPkPets,
+  findByUser,
+  findByFoundation,
+} from "../models/Views/pets.views.js";
+import { favouritePetsByUser } from "../controllers/favouriteController.js";
+import { faker } from "@faker-js/faker";
+import { City } from "../models/City.js";
+import { Country } from "../models/Country.js";
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
