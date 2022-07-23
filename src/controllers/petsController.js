@@ -44,9 +44,8 @@ export const getPetsByIdUser = async (req, res) => {
 
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
+  const { city, country, userId } = req.query;
   try {
-    const { city, country, userId } = req.query;
-
     //obtener mascotas por ciudades y por usuario.
     if (city && !userId) {
       const ptC = await petsCity(city);
@@ -394,9 +393,8 @@ export const findCity = async (name) => {
 };
 
 //Route get pets by city
-export const findPetsByCity = async (req, res) => {
+export const findPetsByCity = async (city, userId) => {
   // #swagger.tags = ['PETS']
-  const { city, userId } = req.query;
   try {
     const cityName = await findCity(city);
     // const pets = await findAllPets();
@@ -437,14 +435,13 @@ export const findCountry = async (name) => {
     attributes: ["name", "id"],
   });
   const countryName = countries.filter(
-    (country) => country.id.toLowerCase() === name.toLowerCase()
+    (country) => country.name.toLowerCase() === name.toLowerCase()
   );
   return countryName;
 };
 //Route find Pets by Country
 export const findPetsByCountry = async (country, userId) => {
   const countryName = await findCountry(country);
-
   try {
     const allPets = await findAllPets();
     const filteredPets = allPets.filter(
