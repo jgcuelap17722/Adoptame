@@ -10,10 +10,14 @@ let transporter = nodemailer.createTransport({
     user: APP_EMAIL, // generated ethereal user
     pass: APP_PASS_EMAIL, // generated ethereal passwor
   },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false
+  },
 });
 
 
-export const autoMail = async (header, toMail, subject, titulo, mensaje, { text, link }) => {
+export const autoMail = async (header, toMail, subject, titulo, mensaje, button) => {
 
   // let button = {text: texto, link: un link}
 
@@ -23,7 +27,7 @@ export const autoMail = async (header, toMail, subject, titulo, mensaje, { text,
     from: `${header} <adoptaMe>`,
     to: toMail,
     subject: subject,
-    html: html(titulo, mensaje, { text, link }),
+    html: html(titulo, mensaje, button),
   });
 }
 
