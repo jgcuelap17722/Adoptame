@@ -26,8 +26,8 @@ router.get("/", getAllPets);
 router.get("/:petId", getPetsById);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
-router.get("/pets/city", findPetsByCity);
-router.get("/pets/country", findPetsByCountry);
+router.get("/city", findPetsByCity);
+router.get("/country", findPetsByCountry);
 
 router.post("/", authMiddleware, upload.array("photos"), createPets);
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);

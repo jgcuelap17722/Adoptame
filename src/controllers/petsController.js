@@ -130,12 +130,12 @@ export const createPets = async (req, res) => {
   const images = req?.files?.length ? req.files.map((image) => image.path) : [];
   const idFiles = req?.files?.length
     ? req.files.map((img) =>
-        img.filename.slice(img.filename.lastIndexOf("/") + 1)
-      )
+      img.filename.slice(img.filename.lastIndexOf("/") + 1)
+    )
     : [];
   try {
     const { data } = req.body;
-    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
+    const infoPets = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -253,13 +253,13 @@ export const updatePets = async (req, res) => {
     : [];
   const idUploadImages = req?.files?.length
     ? req.files.map((img) =>
-        img.filename.slice(img.filename.lastIndexOf("/") + 1)
-      )
+      img.filename.slice(img.filename.lastIndexOf("/") + 1)
+    )
     : [];
   try {
     const { data } = req.body;
     const { petId } = req.params;
-    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
+    const infoPets = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
     const {
       name,// SI
       typeId,
