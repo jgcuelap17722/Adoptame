@@ -5,7 +5,7 @@ import { User } from "../models/User.js"
 import { autoMail } from '../helpers/sendEmails.js';
 import { Match } from "../models/Match.js";
 export const getproces = async (req,res)=>{
-  // #swagger.tags = ['ADOPTiON']
+  // #swagger.tags = ['ADOPTION']
     const{petId,userId}= req.params;
     const pet= await Pets.findByPk(petId)
     const UserData= await User.findByPk(userId);
