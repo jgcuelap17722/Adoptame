@@ -254,7 +254,6 @@ export const updatePets = async (req, res) => {
       typeId,
       breedId, // SI
       coat,
-      specialCares,
       castrated, // SI
       gender,
       environment, // SI
@@ -294,7 +293,6 @@ export const updatePets = async (req, res) => {
       const petUpdated = await Pets.update({
         name: name ? name : pet.name,
         coat: coat ? coat : pet.coat,
-        specialCares: (specialCares && (typeof specialCares === "boolean" || specialCares == "true")) ?? pet.specialCares,
         castrated: (castrated && (typeof castrated === "boolean" || castrated == "true")) ?? pet.castrated,
         gender: gender ? gender : pet.gender,
         environment: (typeof environment === 'object' ? JSON.stringify(environment) : environment) ?? JSON.stringify(pet.environment),
