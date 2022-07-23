@@ -1,12 +1,19 @@
-import { Pets } from '../models/Pets.js';
-import { User } from '../models/User.js';
-import { TypePet } from '../models/Typepet.js';
-import { BreedPet } from '../models/Breedpet.js';
-import { ColorPet } from '../models/Colorpet.js';
-import { deleteFile } from '../middlewares/cloudinary.js';
-import { findAllPets, findByPkPets, findByUser, findByFoundation } from '../models/Views/pets.views.js';
-import { favouritePetsByUser } from '../controllers/favouriteController.js';
-import { faker } from '@faker-js/faker';
+import { Pets } from "../models/Pets.js";
+import { User } from "../models/User.js";
+import { TypePet } from "../models/Typepet.js";
+import { BreedPet } from "../models/Breedpet.js";
+import { ColorPet } from "../models/Colorpet.js";
+import { deleteFile } from "../middlewares/cloudinary.js";
+import {
+  findAllPets,
+  findByPkPets,
+  findByUser,
+  findByFoundation,
+} from "../models/Views/pets.views.js";
+import { favouritePetsByUser } from "../controllers/favouriteController.js";
+import { faker } from "@faker-js/faker";
+import { City } from "../models/City.js";
+import { Country } from "../models/Country.js";
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -323,3 +330,104 @@ export const deletePets = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 }
+
+// Funtion get city
+export const findCity = async (name) => {
+  const cities = await City.findAll({
+    attributes: ["name"],
+  });
+  const cityName = cities.filter(
+    (city) => city.name.toLowerCase() === name.toLowerCase()
+  );
+  return cityName;
+};
+//Route get pets by city
+export const findPetsByCity = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  const { city, userId } = req.query;
+  console.log(userId);
+  try {
+    const cityName = await findCity(city);
+    // const pets = await findAllPets();
+    if (userId) {
+      const allPets = await findAllPets();
+      const filteredPets = allPets.filter(
+        (pet) =>
+          pet.contact.address.city.toLowerCase() ===
+          cityName[0].name.toLowerCase()
+      );
+      const favouritePetsbyUser = await favouritePetsByUser(userId);
+      const mergeAllAndFavouritePets = [
+        ...filteredPets,
+        ...favouritePetsbyUser,
+      ];
+      const set = new Set();
+      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+        const alreadyHas = set.has(pet.id);
+        set.add(pet.id);
+        return !alreadyHas;
+      });
+      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+      const allAndFavouritePets = uniquePets.map((pet) => {
+        if (idFavourites.includes(pet.id)) {
+          pet.isFavourite = true;
+        }
+        return pet;
+      });
+      return res.status(200).json(allAndFavouritePets);
+    }
+    // const pets = await Pets.findAll({where:  })
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+// Funtion get Country
+export const findCountry = async (name) => {
+  const countries = await Country.findAll({
+    attributes: ["name", "id"],
+  });
+  const countryName = countries.filter(
+    (country) => country.name.toLowerCase() === name.toLowerCase()
+  );
+  return countryName;
+};
+//Route find Pets by Country
+export const findPetsByCountry = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  const { country, userId } = req.query;
+  const countryName = await findCountry(country);
+  // const allPets = await findAllPets();
+  try {
+    if (userId) {
+      const allPets = await findAllPets();
+      const filteredPets = allPets.filter(
+        (pet) =>
+          pet.contact.address.country.toLowerCase() ===
+          countryName[0].id.toLowerCase()
+      );
+      const favouritePetsbyUser = await favouritePetsByUser(userId);
+      const mergeAllAndFavouritePets = [
+        ...filteredPets,
+        ...favouritePetsbyUser,
+      ];
+      const set = new Set();
+      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+        const alreadyHas = set.has(pet.id);
+        set.add(pet.id);
+        return !alreadyHas;
+      });
+      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+      const allAndFavouritePets = uniquePets.map((pet) => {
+        if (idFavourites.includes(pet.id)) {
+          pet.isFavourite = true;
+        }
+        return pet;
+      });
+      return res.status(200).json(allAndFavouritePets);
+    }
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
