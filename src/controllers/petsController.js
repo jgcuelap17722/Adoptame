@@ -135,7 +135,7 @@ export const createPets = async (req, res) => {
     : [];
   try {
     const { data } = req.body;
-    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
+    const infoPets = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
