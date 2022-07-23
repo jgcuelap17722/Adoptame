@@ -372,7 +372,6 @@ export const findCity = async (name) => {
 export const findPetsByCity = async (req, res) => {
   // #swagger.tags = ['PETS']
   const { city, userId } = req.query;
-  console.log(userId);
   try {
     const cityName = await findCity(city);
     // const pets = await findAllPets();
@@ -415,7 +414,7 @@ export const findCountry = async (name) => {
     attributes: ["name", "id"],
   });
   const countryName = countries.filter(
-    (country) => country.name.toLowerCase() === name.toLowerCase()
+    (country) => country.id.toLowerCase() === name.toLowerCase()
   );
   return countryName;
 };
