@@ -83,6 +83,7 @@ export const getPetsFoundation = async (req, res) => {
 
     /* if (idFundation) { */
     const detailPet = await findByFoundation();
+
     return res.status(200).json(detailPet);
     /* } */
   } catch (error) {
@@ -226,32 +227,34 @@ export const updatePets = async (req, res) => {
     const { petId } = req.params;
     const infoPets = data ? JSON.parse(req.body?.data) : req.body;
     const {
-      name,
+      name,// SI
       typeId,
-      breedId,
+      breedId, // SI
       coat,
       specialCares,
-      castrated,
+      castrated, // SI
       gender,
-      environment,
+      environment, // SI
       tags,
       size,
       age,
-      health,
-      description,
+      health, // SI
+      description, // SI
       status,
-      urlPhotosDb,
+      urlPhotosDb, // SI
       colorId,
       attributes,
     } = infoPets;
 
     const pet = await Pets.findByPk(petId);
-    const breed = await BreedPet.findByPk(breedId);
-    const type = await TypePet.findByPk(typeId);
-    const color = await ColorPet.findByPk(colorId);
+    const breed = await BreedPet.findByPk(breedId ? breedId: pet.breedId);
+    const type = await TypePet.findByPk(typeId ? typeId : pet.typeId );
+    const color = await ColorPet.findByPk(colorId ? colorId : pet.colorId);
+
+    console.log('pet: ', pet);
+    console.log('infoPets: ', infoPets);
 
     const urlsDb = urlPhotosDb === "" ? [] : urlPhotosDb;
-
     if (pet && pet.status === "adoptable") {
       const differenceUrlsDb = pet.photos.filter(
         (url) => !urlsDb.includes(url)

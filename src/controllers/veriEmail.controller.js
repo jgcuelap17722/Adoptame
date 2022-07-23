@@ -65,7 +65,7 @@ export const logVerify = async (req, res) => {
          
     } catch (error) {
         console.log(error)
-        res.json({msg: "verification fail"})
+        res.json({error: "verification fail"})
     }
 }
 export const petiPass = async (req, res) => {
@@ -100,7 +100,7 @@ export const petiPass = async (req, res) => {
         
     } catch (error) {
         console.log(error)
-        res.json({msg: "verification fail"})
+        res.json({error: "verification fail"})
     }
 }
 export const recuperated = async (req, res) => {
@@ -111,8 +111,8 @@ export const recuperated = async (req, res) => {
         let busqueda = await User.findOne({
             where:{id:info.id}
           })
-        if (!busqueda) {return res.status(400).json({msg: "verification fail"})}
-        if (password1!==password2) {return res.status(400).json({msg: "the password does not match"})}
+        if (!busqueda) {return res.status(400).json({error: "verification fail"})}
+        if (password1!==password2) {return res.status(400).json({error: "the password does not match"})}
         let passwordHash = await encrypt(password1);
         await User.update({password: passwordHash}, {where: {id: info.id}})
         res.status(200).json({msg: "updated password"})
@@ -120,6 +120,6 @@ export const recuperated = async (req, res) => {
         
     } catch (error) {
         console.log(error)
-        res.json({msg: "verification fail"})
+        res.json({error: "verification fail"})
     }
 }

@@ -72,7 +72,7 @@ export const generateDataPets = async (results, ids) => {
       userId: faker.helpers.arrayElement(ids),
       name: name,
       typeId: type,
-      breedId: (type === 'perro') ? faker.datatype.number({ min: 1, max: 96 }) : faker.datatype.number({ min: 96, max: 163 }),
+      breedId: (type === 'perro') ? faker.datatype.number({ min: 90, max: 460 }) : faker.datatype.number({ min: 1, max: 89 }),
       colorId: (type === 'perro') ? faker.datatype.number({ min: 30, max: 44 }) : faker.datatype.number({ min: 1, max: 29 }),
       age: faker.helpers.arrayElement(pets[0].ages),
       gender: genders,
