@@ -45,9 +45,26 @@ export const getPetsByIdUser = async (req, res) => {
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
-    const { userId } = req.query;
+    const { city, country, userId } = req.query;
 
-    if (userId) {
+    //obtener mascotas por ciudades y por usuario.
+    if (city && !userId) {
+      const ptC = await petsCity(city);
+      return res.send(ptC);
+    }
+    if (country && !userId) {
+      const ptCountry = await petsCountry(country);
+      return res.send(ptCountry);
+    }
+    if (city && userId) {
+      const petsByCity = await findPetsByCity(city, userId);
+      return res.send(petsByCity);
+    }
+    if (country && userId) {
+      const petsByCountry = await findPetsByCountry(country, userId);
+      return res.send(petsByCountry);
+    }
+    if (userId && !city && !country) {
       const allPets = await findAllPets();
       const favouritePetsbyUser = await favouritePetsByUser(userId);
 
@@ -134,11 +151,15 @@ export const createPets = async (req, res) => {
   const images = req?.files?.length
     ? req.files.map(image => image.path) : [];
   const idFiles = req?.files?.length
-    ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
+    ? req.files.map((img) =>
+        img.filename.slice(img.filename.lastIndexOf("/") + 1)
+      )
     : [];
   try {
     const { data } = req.body;
-    const infoPets = typeof data === 'string' ? JSON.parse(req.body?.data) : req.body;
+    const infoPets =
+      typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
+
     const {
       name,
       typeId,
@@ -214,14 +235,17 @@ export const updatePets = async (req, res) => {
     ? req.files.map(image => image.path)
     : [];
   const idUploadImages = req?.files?.length
-    ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
+    ? req.files.map((img) =>
+        img.filename.slice(img.filename.lastIndexOf("/") + 1)
+      )
     : [];
   try {
     const { data } = req.body;
     const { petId } = req.params;
-    const infoPets = typeof data === 'string' ? JSON.parse(req.body?.data) : req.body;
+    const infoPets =
+      typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
     const {
-      name,// SI
+      name, // SI
       typeId,
       breedId, // SI
       coat,
@@ -245,8 +269,8 @@ export const updatePets = async (req, res) => {
     const type = await TypePet.findByPk(typeId ? typeId : pet.typeId);
     const color = await ColorPet.findByPk(colorId ? colorId : pet.colorId);
 
-    console.log('pet: ', pet);
-    console.log('infoPets: ', infoPets);
+    console.log("pet: ", pet);
+    console.log("infoPets: ", infoPets);
 
     const urlsDb = (urlPhotosDb === "" ? [] : urlPhotosDb) ?? [];
 
@@ -298,7 +322,7 @@ export const updatePets = async (req, res) => {
       deleteFile(idFile);
     });
 
-    return res.status(400).json({ error: "the pet is adopted¡" });
+    return res.status(400).json({ message: "pet invalid" });
 
   } catch (error) {
     imageUploadUrls.length && idUploadImages.forEach(idFile => {
@@ -342,44 +366,39 @@ export const findCity = async (name) => {
   return cityName;
 };
 //Route get pets by city
-export const findPetsByCity = async (req, res) => {
-  // #swagger.tags = ['PETS']
-  const { city, userId } = req.query;
-  console.log(userId);
+export const findPetsByCity = async (city, userId) => {
   try {
     const cityName = await findCity(city);
     // const pets = await findAllPets();
-    if (userId) {
-      const allPets = await findAllPets();
-      const filteredPets = allPets.filter(
-        (pet) =>
-          pet.contact.address.city.toLowerCase() ===
-          cityName[0].name.toLowerCase()
-      );
-      const favouritePetsbyUser = await favouritePetsByUser(userId);
-      const mergeAllAndFavouritePets = [
-        ...filteredPets,
-        ...favouritePetsbyUser,
-      ];
-      const set = new Set();
-      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
-        const alreadyHas = set.has(pet.id);
-        set.add(pet.id);
-        return !alreadyHas;
-      });
-      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
-      const allAndFavouritePets = uniquePets.map((pet) => {
-        if (idFavourites.includes(pet.id)) {
-          pet.isFavourite = true;
-        }
-        return pet;
-      });
-      return res.status(200).json(allAndFavouritePets);
-    }
-    // const pets = await Pets.findAll({where:  })
+    const allPets = await findAllPets();
+    const filteredPets = allPets.filter(
+      (pet) =>
+        pet.contact.address.city.toLowerCase() ===
+        cityName[0].name.toLowerCase()
+    );
+    const favouritePetsbyUser = await favouritePetsByUser(userId);
+
+    const mergeAllAndFavouritePets = [...filteredPets, ...favouritePetsbyUser];
+
+    const set = new Set();
+    const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+      const alreadyHas = set.has(pet.id);
+      set.add(pet.id);
+      return !alreadyHas;
+    });
+
+    const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+
+    const allAndFavouritePets = uniquePets.map((pet) => {
+      if (idFavourites.includes(pet.id)) {
+        pet.isFavourite = true;
+      }
+      return pet;
+    });
+    return allAndFavouritePets;
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return { error: error.message };
   }
 };
 // Funtion get Country
@@ -393,41 +412,64 @@ export const findCountry = async (name) => {
   return countryName;
 };
 //Route find Pets by Country
-export const findPetsByCountry = async (req, res) => {
-  // #swagger.tags = ['PETS']
-  const { country, userId } = req.query;
+export const findPetsByCountry = async (country, userId) => {
   const countryName = await findCountry(country);
-  // const allPets = await findAllPets();
+
   try {
-    if (userId) {
-      const allPets = await findAllPets();
-      const filteredPets = allPets.filter(
-        (pet) =>
-          pet.contact.address.country.toLowerCase() ===
-          countryName[0].id.toLowerCase()
-      );
-      const favouritePetsbyUser = await favouritePetsByUser(userId);
-      const mergeAllAndFavouritePets = [
-        ...filteredPets,
-        ...favouritePetsbyUser,
-      ];
-      const set = new Set();
-      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
-        const alreadyHas = set.has(pet.id);
-        set.add(pet.id);
-        return !alreadyHas;
-      });
-      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
-      const allAndFavouritePets = uniquePets.map((pet) => {
-        if (idFavourites.includes(pet.id)) {
-          pet.isFavourite = true;
-        }
-        return pet;
-      });
-      return res.status(200).json(allAndFavouritePets);
-    }
+    const allPets = await findAllPets();
+    const filteredPets = allPets.filter(
+      (pet) =>
+        pet.contact.address.country.toLowerCase() ===
+        countryName[0].id.toLowerCase()
+    );
+    const favouritePetsbyUser = await favouritePetsByUser(userId);
+
+    const mergeAllAndFavouritePets = [...filteredPets, ...favouritePetsbyUser];
+
+    const set = new Set();
+    const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+      const alreadyHas = set.has(pet.id);
+      set.add(pet.id);
+      return !alreadyHas;
+    });
+
+    const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+
+    const allAndFavouritePets = uniquePets.map((pet) => {
+      if (idFavourites.includes(pet.id)) {
+        pet.isFavourite = true;
+      }
+      return pet;
+    });
+    return allAndFavouritePets;
+
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return { error: error.message };
   }
+
 };
+
+//funcion para buscar mascotas por ciudad
+const petsCity = async (name) => {
+  const cityName = await findCity(name);
+  const allPets = await findAllPets();
+  const filteredPets = allPets.filter(
+    (pet) =>
+      pet.contact.address.city.toLowerCase() === cityName[0].name.toLowerCase()
+  );
+  return filteredPets;
+};
+
+//funcion para buscar mascotas por pais
+const petsCountry = async (name) => {
+  const countryName = await findCountry(name);
+  const allPets = await findAllPets();
+  const filteredPets = allPets.filter(
+    (pet) =>
+      pet.contact.address.country.toLowerCase() ===
+      countryName[0].id.toLowerCase()
+  );
+  return filteredPets;
+};
+
