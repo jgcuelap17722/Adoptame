@@ -12,24 +12,24 @@ import {
   createPets,
   updatePets,
   deletePets,
+  findPetsByCity,
+  findPetsByCountry,
 } from "../controllers/petsController.js";
 
 const router = Router();
 
-router.use('/favourite', favouritePet)
-router.use('/addPets', petsDataFake);
+router.use("/favourite", favouritePet);
+router.get("/foundation", getPetsFoundation);
+
 
 router.get("/", getAllPets);
 router.get("/:petId", getPetsById);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
+router.get("/pets/city", findPetsByCity);
+router.get("/pets/country", findPetsByCountry);
 
-router.post(
-  "/",
-  authMiddleware,
-  upload.array("photos"),
-  createPets
-);
+router.post("/", authMiddleware, upload.array("photos"), createPets);
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
 router.delete("/:petId", authMiddleware, deletePets);
 
