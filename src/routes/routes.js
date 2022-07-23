@@ -26,6 +26,7 @@ import automail from "./autoMail.routes.js";
 
 import start from "./starts.routes.js";
 import match from "./match.routes.js"
+import adoption from "./adoption.routes.js"
 
 
 const router = Router();
@@ -49,5 +50,6 @@ router.use("/fundations", fundation);
 
 router.use("/start", start)
 router.use('/match', match)
+router.use("/adoption",adoption)
 
 export default router;

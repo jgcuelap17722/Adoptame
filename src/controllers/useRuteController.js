@@ -58,6 +58,7 @@ export const createUser = async (req, res) => {
             userFundation.setCity(city);
             Solicitudes.create({
               userId: userFundation.id,
+              solicitud:"Verificacion de documento"
             });
             return res.json({
               message:
