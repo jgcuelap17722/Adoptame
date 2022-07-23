@@ -230,7 +230,36 @@ export const createPets = async (req, res) => {
 }
 
 export const updatePets = async (req, res) => {
-  // #swagger.tags = ['PETS']
+  /*
+  #swagger.tags = ['PETS']
+  #swagger.parameters['body'] = {
+    in: 'body',
+      description: 'Some description...',
+      schema: {
+        name: "new name pet test",
+        typeId: "perro",
+        breedId: 2,
+        colorId: 31,
+        age: "joven",
+        gender: "macho",
+        tags: ["amigable", "cariñoso"],
+        castrated: false,
+        attributes: {"house_trained": true,"special_needs": false},
+        environment: {"children": true,"dogs": false,"cats": false},
+        urlPhotosDb: []
+      }
+    }
+      #swagger.consumes = ['multipart/form-data']  
+      #swagger.parameters['photos'] = {
+          in: 'formData',
+          type: 'array',
+          required: true,
+          description: 'Selecciona fotos de la mascota',
+          collectionFormat: 'multi',
+          items: { type: 'file' }
+      }
+  #swagger.security = [{"apiKeyAuth": []}] 
+  */
   const imageUploadUrls = req?.files?.length
     ? req.files.map(image => image.path)
     : [];
@@ -249,7 +278,6 @@ export const updatePets = async (req, res) => {
       typeId,
       breedId, // SI
       coat,
-      specialCares,
       castrated, // SI
       gender,
       environment, // SI
@@ -289,7 +317,6 @@ export const updatePets = async (req, res) => {
       const petUpdated = await Pets.update({
         name: name ? name : pet.name,
         coat: coat ? coat : pet.coat,
-        specialCares: (specialCares && (typeof specialCares === "boolean" || specialCares == "true")) ?? pet.specialCares,
         castrated: (castrated && (typeof castrated === "boolean" || castrated == "true")) ?? pet.castrated,
         gender: gender ? gender : pet.gender,
         environment: (typeof environment === 'object' ? JSON.stringify(environment) : environment) ?? JSON.stringify(pet.environment),
@@ -365,8 +392,11 @@ export const findCity = async (name) => {
   );
   return cityName;
 };
+
 //Route get pets by city
-export const findPetsByCity = async (city, userId) => {
+export const findPetsByCity = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  const { city, userId } = req.query;
   try {
     const cityName = await findCity(city);
     // const pets = await findAllPets();
@@ -407,7 +437,7 @@ export const findCountry = async (name) => {
     attributes: ["name", "id"],
   });
   const countryName = countries.filter(
-    (country) => country.name.toLowerCase() === name.toLowerCase()
+    (country) => country.id.toLowerCase() === name.toLowerCase()
   );
   return countryName;
 };
