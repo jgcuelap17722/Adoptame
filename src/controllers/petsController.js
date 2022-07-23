@@ -209,7 +209,36 @@ export const createPets = async (req, res) => {
 }
 
 export const updatePets = async (req, res) => {
-  // #swagger.tags = ['PETS']
+  /*
+  #swagger.tags = ['PETS']
+  #swagger.parameters['body'] = {
+    in: 'body',
+      description: 'Some description...',
+      schema: {
+        name: "new name pet test",
+        typeId: "perro",
+        breedId: 2,
+        colorId: 31,
+        age: "joven",
+        gender: "macho",
+        tags: ["amigable", "cariñoso"],
+        castrated: false,
+        attributes: {"house_trained": true,"special_needs": false},
+        environment: {"children": true,"dogs": false,"cats": false},
+        urlPhotosDb: []
+      }
+    }
+      #swagger.consumes = ['multipart/form-data']  
+      #swagger.parameters['photos'] = {
+          in: 'formData',
+          type: 'array',
+          required: true,
+          description: 'Selecciona fotos de la mascota',
+          collectionFormat: 'multi',
+          items: { type: 'file' }
+      }
+  #swagger.security = [{"apiKeyAuth": []}] 
+  */
   const imageUploadUrls = req?.files?.length
     ? req.files.map(image => image.path)
     : [];
