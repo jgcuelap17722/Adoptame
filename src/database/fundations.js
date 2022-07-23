@@ -49,7 +49,7 @@ export const organizations = [
     {
       "id": 2,
       "name": "Montgomery City Animal Shelter/Project Precious Paws",
-      "email": "projectpreciouspaws@hotmail.com",
+      "email": "jgcuelap2018@gmail.com",
       "phone": "1-573-310-4979",
       "address": {
         "address1": "915 Benton Street",

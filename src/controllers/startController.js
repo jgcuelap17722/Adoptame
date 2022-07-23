@@ -32,9 +32,12 @@ export const prop = async (req, res) => {
    /*
    #swagger.tags = ['COMENTS']
    #swagger.parameters['body'] = {
-   msg:{coment: "comentario", point: "0-5"},
-   id: "fundacionId",
-   usId: "usuarioId"
+    in: 'body',
+    schema: {
+      msg:{coment: "comentario", point: "0-5"},
+      id: "fundacionId",
+      usId: "usuarioId"
+    }
    }
    */
     const { id, userId  } = req.body

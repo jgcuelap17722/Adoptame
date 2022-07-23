@@ -21,8 +21,6 @@ import colorPet from "./colorsPet.routes.js";
 import donation from "./donation.routes.js";
 import fundation from "./fundation.routes.js";
 
-import petsDataFake from "./petsDataFake.routes.js";
-
 import veriEmail from "./veriEmail.routes.js";
 import automail from "./autoMail.routes.js";
 
@@ -41,8 +39,6 @@ router.use('/auth', auth);
 router.use("/type-pet", typePet);
 router.use("/breed-pet", breedPet);
 router.use("/color-pet", colorPet);
-
-router.use('/addPets', petsDataFake);
 
 router.use("/verify", veriEmail);
 router.use("/auto", automail);
