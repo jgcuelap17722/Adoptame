@@ -14,8 +14,6 @@ import {
   createPets,
   updatePets,
   deletePets,
-  findPetsByCity,
-  findPetsByCountry,
 } from "../controllers/petsController.js";
 
 const router = Router();
@@ -30,12 +28,7 @@ router.get("/:petId", getPetsById);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
 
-router.post(
-  "/",
-  authMiddleware,
-  upload.array("photos"),
-  createPets
-);
+router.post("/", authMiddleware, upload.array("photos"), createPets);
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
 router.delete("/:petId", authMiddleware, deletePets);
 
