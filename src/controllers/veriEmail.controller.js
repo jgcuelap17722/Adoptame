@@ -8,6 +8,7 @@ const url = URL_FRONT || "localhost:5000";
 
 
 export const veriEmail = async (req, res) => {
+    // #swagger.tags = ['VERIFY']
     try {
       const {email} = req.body;
       let busqueda = await User.findOne({
@@ -49,6 +50,7 @@ export const veriEmail = async (req, res) => {
 }
 
 export const logVerify = async (req, res) => {
+    // #swagger.tags = ['VERIFY']
     try {
         const {tok} =req.params;
         let info = jwt.decode(tok);
@@ -69,6 +71,7 @@ export const logVerify = async (req, res) => {
     }
 }
 export const petiPass = async (req, res) => {
+    // #swagger.tags = ['VERIFY']
     try {
         const {email} = req.body;
       let busqueda = await User.findOne({
@@ -104,6 +107,7 @@ export const petiPass = async (req, res) => {
     }
 }
 export const recuperated = async (req, res) => {
+    // #swagger.tags = ['VERIFY']
     try {
         const {tak} = req.params;
         const {password1, password2} = req.body;

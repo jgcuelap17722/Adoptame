@@ -24,6 +24,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
+  // #swagger.ignore = true
   return res.redirect("/docs");
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));

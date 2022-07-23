@@ -6,6 +6,7 @@ import {
 } from "../services/PaymentService.js";
 
 export const createPreferentialPayment = async (req, res) => {
+  // #swagger.tags = ['MERCADOPAGO']
   try {
 
     // capturar el body del front
@@ -48,6 +49,7 @@ export const createPreferentialPayment = async (req, res) => {
 }
 
 export const getAllPayments = async (req, res) => {
+  // #swagger.tags = ['MERCADOPAGO']
   try {
     const payments = await getPaymentsService();
     return res.json(payments);
@@ -60,6 +62,7 @@ export const getAllPayments = async (req, res) => {
 }
 
 export const getPaymentById = async (req, res) => {
+  // #swagger.tags = ['MERCADOPAGO']
   try {
     const { idPayment } = req.params;
     const payments = await getPaymentByIdService(idPayment);

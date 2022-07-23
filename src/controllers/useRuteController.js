@@ -108,36 +108,41 @@ export const createUser = async (req, res) => {
     // return res.send(data);
   } catch (error) {
     // deleteFile[idfiles];
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 /// GET USER
 export const getUser = async (req, res) => {
   // #swagger.tags = ['USER']
+    /* #swagger.security = [{
+      "apiKeyAuth": []
+  }] */
   try {
     const users = await findAllUsers();
     return res.send(users);
   } catch (error) {
-    return res.json({ message: error.message });
+    return res.json({ error: error.message });
   }
 };
 
 /// GET DETAILS USER
 export const getDetailUser = async (req, res) => {
   // #swagger.tags = ['USER']
+  // #swagger.security = [{"apiKeyAuth": []}]
   const { id } = req.params;
   try {
-      const dataUser = await findUserById(id);
-      return res.send(dataUser);
+    const dataUser = await findUserById(id);
+    return res.send(dataUser);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 //UPDATE USER
 export const updateUser = async (req, res) => {
   // #swagger.tags = ['USER']
+  // #swagger.security = [{"apiKeyAuth": []}]
   const { id } = req.params;
   const { password, newPassword, cityId, countryId } = req.body;
   const us = await User.findOne({
@@ -180,13 +185,14 @@ export const updateUser = async (req, res) => {
     const user = await userDetail(id);
     return res.send(user);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 //PUT USER from admin
 export const adminUpdateUser = async (req, res) => {
   // #swagger.tags = ['USER']
+  // #swagger.security = [{"apiKeyAuth": []}]
   const { id } = req.params;
   const { name, lastName, role, address, phone, active } = req.body;
   console.log(req.body);
@@ -208,7 +214,7 @@ export const adminUpdateUser = async (req, res) => {
     );
     return res.status(201).json({ message: "Updated!" });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -216,6 +222,7 @@ export const adminUpdateUser = async (req, res) => {
 
 export const updatesolicitud = async (req, res) => {
   // #swagger.tags = ['SOLICITUD']
+  // #swagger.security = [{"apiKeyAuth": []}]
   const { id } = req.params;
   const { estado, fechafinaliza } = req.body;
   try {
@@ -234,6 +241,6 @@ export const updatesolicitud = async (req, res) => {
       return res.status(201).json({ message: "State Updated!" });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
