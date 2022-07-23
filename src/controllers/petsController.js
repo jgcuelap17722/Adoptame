@@ -1,12 +1,19 @@
-import { Pets } from '../models/Pets.js';
-import { User } from '../models/User.js';
-import { TypePet } from '../models/Typepet.js';
-import { BreedPet } from '../models/Breedpet.js';
-import { ColorPet } from '../models/Colorpet.js';
-import { deleteFile } from '../middlewares/cloudinary.js';
-import { findAllPets, findByPkPets, findByUser, findByFoundation } from '../models/Views/pets.views.js';
-import { favouritePetsByUser } from '../controllers/favouriteController.js';
-import { faker } from '@faker-js/faker';
+import { Pets } from "../models/Pets.js";
+import { User } from "../models/User.js";
+import { TypePet } from "../models/Typepet.js";
+import { BreedPet } from "../models/Breedpet.js";
+import { ColorPet } from "../models/Colorpet.js";
+import { deleteFile } from "../middlewares/cloudinary.js";
+import {
+  findAllPets,
+  findByPkPets,
+  findByUser,
+  findByFoundation,
+} from "../models/Views/pets.views.js";
+import { favouritePetsByUser } from "../controllers/favouriteController.js";
+import { faker } from "@faker-js/faker";
+import { City } from "../models/City.js";
+import { Country } from "../models/Country.js";
 
 export const getPetsById = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -17,23 +24,22 @@ export const getPetsById = async (req, res) => {
       const detailPet = await findByPkPets(petId);
       return res.status(200).json(detailPet);
     }
-
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const getPetsByIdUser = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
     const { userId } = req.params;
     const petsByUserId = await findByUser(userId);
-    return res.status(200).json(petsByUserId)
+    return res.status(200).json(petsByUserId);
   } catch (error) {
     console.log(error.message);
     return res.status(400).json({ error: error.message });
   }
-}
+};
 
 export const getAllPets = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -44,26 +50,23 @@ export const getAllPets = async (req, res) => {
       const allPets = await findAllPets();
       const favouritePetsbyUser = await favouritePetsByUser(userId);
 
-      const mergeAllAndFavouritePets = [
-        ...allPets,
-        ...favouritePetsbyUser
-      ]
+      const mergeAllAndFavouritePets = [...allPets, ...favouritePetsbyUser];
 
-      const set = new Set()
-      const uniquePets = mergeAllAndFavouritePets.filter(pet => {
-        const alreadyHas = set.has(pet.id)
-        set.add(pet.id)
-        return !alreadyHas
-      })
+      const set = new Set();
+      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+        const alreadyHas = set.has(pet.id);
+        set.add(pet.id);
+        return !alreadyHas;
+      });
 
-      const idFavourites = favouritePetsbyUser.map(pet => pet.id)
+      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
 
-      const allAndFavouritePets = uniquePets.map(pet => {
+      const allAndFavouritePets = uniquePets.map((pet) => {
         if (idFavourites.includes(pet.id)) {
-          pet.isFavourite = true
+          pet.isFavourite = true;
         }
-        return pet
-      })
+        return pet;
+      });
       return res.status(200).json(allAndFavouritePets);
     }
     const allPets = await findAllPets();
@@ -71,7 +74,7 @@ export const getAllPets = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const getPetsFoundation = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -79,14 +82,14 @@ export const getPetsFoundation = async (req, res) => {
     /* const { idFundation } = req.params; */
 
     /* if (idFundation) { */
-    const detailPet = await findByFoundation()
+    const detailPet = await findByFoundation();
+
     return res.status(200).json(detailPet);
     /* } */
-
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
 export const createPets = async (req, res) => {
   /*
@@ -124,10 +127,11 @@ export const createPets = async (req, res) => {
   #swagger.security = [{"apiKeyAuth": []}] 
   */
 
-  const images = req?.files?.length
-    ? req.files.map(image => image.path) : [];
+  const images = req?.files?.length ? req.files.map((image) => image.path) : [];
   const idFiles = req?.files?.length
-    ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
+    ? req.files.map((img) =>
+        img.filename.slice(img.filename.lastIndexOf("/") + 1)
+      )
     : [];
   try {
     const { data } = req.body;
@@ -147,7 +151,7 @@ export const createPets = async (req, res) => {
       castrated,
       attributes,
       environment,
-      userId
+      userId,
     } = infoPets;
 
     const user = await User.findByPk(userId);
@@ -172,9 +176,16 @@ export const createPets = async (req, res) => {
         health,
         description,
         tags,
-        castrated: typeof castrated === "boolean" ? castrated : castrated == "true",
-        attributes: typeof attributes === 'object' ? JSON.stringify(attributes) : attributes,
-        environment: typeof environment === 'object' ? JSON.stringify(environment) : environment,
+        castrated:
+          typeof castrated === "boolean" ? castrated : castrated == "true",
+        attributes:
+          typeof attributes === "object"
+            ? JSON.stringify(attributes)
+            : attributes,
+        environment:
+          typeof environment === "object"
+            ? JSON.stringify(environment)
+            : environment,
         photos: images,
       });
 
@@ -185,29 +196,32 @@ export const createPets = async (req, res) => {
       await newPet.setColorpet(color);
 
       const detailPetCreated = await findByPkPets(newPet.id);
-      return res.status(201).json({ data: detailPetCreated, message: 'successfully created pet' });
+      return res
+        .status(201)
+        .json({ data: detailPetCreated, message: "successfully created pet" });
     }
-    idFiles.forEach(idFile => {
+    idFiles.forEach((idFile) => {
       deleteFile(idFile);
     });
-    return res.status(400).json({ error: "user invalid" });
-
+    return res.status(400).json({ message: "user invalid" });
   } catch (error) {
-    idFiles.forEach(idFile => {
+    idFiles.forEach((idFile) => {
       deleteFile(idFile);
     });
     console.log(error);
     return res.status(400).json({ error: error.message });
   }
-}
+};
 
 export const updatePets = async (req, res) => {
   // #swagger.tags = ['PETS']
   const imageUploadUrls = req?.files?.length
-    ? req.files.map(image => image.path)
+    ? req.files.map((image) => image.path)
     : [];
   const idUploadImages = req?.files?.length
-    ? req.files.map(img => img.filename.slice(img.filename.lastIndexOf('/') + 1))
+    ? req.files.map((img) =>
+        img.filename.slice(img.filename.lastIndexOf("/") + 1)
+      )
     : [];
   try {
     const { data } = req.body;
@@ -242,66 +256,88 @@ export const updatePets = async (req, res) => {
     console.log('infoPets: ', infoPets);
 
     const urlsDb = urlPhotosDb === "" ? [] : urlPhotosDb;
-
     if (pet && pet.status === "adoptable") {
+      const differenceUrlsDb = pet.photos.filter(
+        (url) => !urlsDb.includes(url)
+      );
 
-      const differenceUrlsDb = pet.photos.filter(url => !urlsDb.includes(url));
+      const urlPhotosDb = differenceUrlsDb.map((url) =>
+        url.slice(url.lastIndexOf("/") + 1)
+      ); // [idImage.jpg]
 
-      const urlPhotosDb = differenceUrlsDb.map(url => url.slice(url.lastIndexOf('/') + 1)); // [idImage.jpg]
+      const idImagesDb = urlPhotosDb.map((nameImage) =>
+        nameImage.slice(0, nameImage.indexOf("."))
+      ); // [idImage]
 
-      const idImagesDb = urlPhotosDb.map(nameImage => nameImage.slice(0, nameImage.indexOf('.'))); // [idImage]
+      idImagesDb.length &&
+        idImagesDb.forEach((idFile) => {
+          deleteFile(idFile);
+        });
 
-      idImagesDb.length && idImagesDb.forEach(idFile => {
-        deleteFile(idFile);
-      });
-
-      const petUpdated = await Pets.update({
-        name: name ? name : pet.name,
-        coat: coat ? coat : pet.coat,
-        specialCares: (specialCares && (typeof specialCares === "boolean" || specialCares == "true")) ?? pet.specialCares,
-        castrated: (castrated && (typeof castrated === "boolean" || castrated == "true")) ?? pet.castrated,
-        gender: gender ? gender : pet.gender,
-        environment: (typeof environment === 'object' ? JSON.stringify(environment) : environment) ?? JSON.stringify(pet.environment),
-        tags: tags ? tags : pet.tags,
-        size: size ? size : pet.size,
-        age: age ? age : pet.age,
-        health: health ? health : pet.health,
-        description: description ? description : pet.description,
-        photos: urlsDb.concat(imageUploadUrls),
-        status: status ? status : pet.status,
-        attributes: (typeof attributes === 'object' ? JSON.stringify(attributes) : attributes) ?? JSON.stringify(pet.attributes)
-      }, {
-        where: {
-          id: petId
+      const petUpdated = await Pets.update(
+        {
+          name,
+          coat,
+          specialCares:
+            typeof specialCares === "boolean"
+              ? specialCares
+              : specialCares == "true",
+          castrated:
+            typeof castrated === "boolean" ? castrated : castrated == "true",
+          gender,
+          environment:
+            typeof environment === "object"
+              ? JSON.stringify(environment)
+              : environment,
+          tags,
+          size,
+          color,
+          age,
+          health,
+          description,
+          photos: urlsDb.concat(imageUploadUrls),
+          status,
+          attributes:
+            typeof attributes === "object"
+              ? JSON.stringify(attributes)
+              : attributes,
         },
-        returning: true,
-        plain: true,
-      });
+        {
+          where: {
+            id: petId,
+          },
+          returning: true,
+          plain: true,
+        }
+      );
 
       await pet.setTypepet(type);
       await pet.setBreedpet(breed);
-      await pet.setColorpet(color);
 
-      // petUpdated[1].dataValues.environment = JSON.parse(petUpdated[1].dataValues.environment)
+      petUpdated[1].dataValues.environment = JSON.parse(
+        petUpdated[1].dataValues.environment
+      );
       const detailPetUpdated = await findByPkPets(petUpdated[1].dataValues.id);
-      return res.status(201).json({ data: detailPetUpdated, message: 'successfully updated pet' });
+      return res
+        .status(201)
+        .json({ data: detailPetUpdated, message: "successfully updated pet" });
     }
 
-    imageUploadUrls.length && idUploadImages.forEach(idFile => {
-      deleteFile(idFile);
-    });
+    imageUploadUrls.length &&
+      idUploadImages.forEach((idFile) => {
+        deleteFile(idFile);
+      });
 
-    return res.status(400).json({ error: "the pet is adopted¡" });
 
+    return res.status(400).json({ message: "pet invalid" });
   } catch (error) {
-    imageUploadUrls.length && idUploadImages.forEach(idFile => {
-      deleteFile(idFile);
-    });
-    console.log(error);
-    return res.status(400).json({ error: error.message });
+    imageUploadUrls.length &&
+      idUploadImages.forEach((idFile) => {
+        deleteFile(idFile);
+      });
+    return res.status(400).json({ message: error.message });
   }
-
-}
+};
 
 export const deletePets = async (req, res) => {
   // #swagger.tags = ['PETS']
@@ -309,17 +345,134 @@ export const deletePets = async (req, res) => {
     const { petId } = req.params;
     const pet = await Pets.findByPk(petId);
     if (pet) {
-      await Pets.update({
-        status: "adopted",
-      }, {
-        where: {
-          id: petId
+      await Pets.update(
+        {
+          status: "adopted",
+        },
+        {
+          where: {
+            id: petId,
+          },
         }
-      });
+      );
       return res.status(200).json({ message: "successfully removed" });
     }
     return res.status(400).json({ error: "pet invalid" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
-}
+};
+
+// Funtion get city
+export const findCity = async (name) => {
+  const cities = await City.findAll({
+    attributes: ["name"],
+  });
+  const cityName = cities.filter(
+    (city) => city.name.toLowerCase() === name.toLowerCase()
+  );
+  return cityName;
+};
+//Route get pets by city
+export const findPetsByCity = async (req, res) => {
+  // #swagger.tags = ['PETS']
+  const { city, userId } = req.query;
+  console.log(userId);
+  try {
+    const cityName = await findCity(city);
+    // const pets = await findAllPets();
+    if (userId) {
+      const allPets = await findAllPets();
+      const filteredPets = allPets.filter(
+        (pet) =>
+          pet.contact.address.city.toLowerCase() ===
+          cityName[0].name.toLowerCase()
+      );
+      const favouritePetsbyUser = await favouritePetsByUser(userId);
+
+      const mergeAllAndFavouritePets = [
+        ...filteredPets,
+        ...favouritePetsbyUser,
+      ];
+
+      const set = new Set();
+      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+        const alreadyHas = set.has(pet.id);
+        set.add(pet.id);
+        return !alreadyHas;
+      });
+
+      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+
+      const allAndFavouritePets = uniquePets.map((pet) => {
+        if (idFavourites.includes(pet.id)) {
+          pet.isFavourite = true;
+        }
+        return pet;
+      });
+      return res.status(200).json(allAndFavouritePets);
+    }
+
+    // const pets = await Pets.findAll({where:  })
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Funtion get Country
+export const findCountry = async (name) => {
+  const countries = await Country.findAll({
+    attributes: ["name", "id"],
+  });
+  const countryName = countries.filter(
+    (country) => country.name.toLowerCase() === name.toLowerCase()
+  );
+  return countryName;
+};
+
+//Route find Pets by Country
+export const findPetsByCountry = async (req, res) => {
+  // #swagger.tags = ['PETS']
+
+  const { country, userId } = req.query;
+  const countryName = await findCountry(country);
+  // const allPets = await findAllPets();
+
+  try {
+    if (userId) {
+      const allPets = await findAllPets();
+      const filteredPets = allPets.filter(
+        (pet) =>
+          pet.contact.address.country.toLowerCase() ===
+          countryName[0].id.toLowerCase()
+      );
+      const favouritePetsbyUser = await favouritePetsByUser(userId);
+
+      const mergeAllAndFavouritePets = [
+        ...filteredPets,
+        ...favouritePetsbyUser,
+      ];
+
+      const set = new Set();
+      const uniquePets = mergeAllAndFavouritePets.filter((pet) => {
+        const alreadyHas = set.has(pet.id);
+        set.add(pet.id);
+        return !alreadyHas;
+      });
+
+      const idFavourites = favouritePetsbyUser.map((pet) => pet.id);
+
+      const allAndFavouritePets = uniquePets.map((pet) => {
+        if (idFavourites.includes(pet.id)) {
+          pet.isFavourite = true;
+        }
+        return pet;
+      });
+      return res.status(200).json(allAndFavouritePets);
+    }
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
