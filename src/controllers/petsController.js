@@ -131,7 +131,7 @@ export const createPets = async (req, res) => {
     : [];
   try {
     const { data } = req.body;
-    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
+    const infoPets = typeof data === 'string' ? JSON.parse(req.body?.data) : req.body;
     const {
       name,
       typeId,
@@ -212,7 +212,7 @@ export const updatePets = async (req, res) => {
   try {
     const { data } = req.body;
     const { petId } = req.params;
-    const infoPets = data ? JSON.parse(req.body?.data) : req.body;
+    const infoPets = typeof data === 'string' ? JSON.parse(req.body?.data) : req.body;
     const {
       name,// SI
       typeId,
@@ -241,7 +241,7 @@ export const updatePets = async (req, res) => {
     console.log('pet: ', pet);
     console.log('infoPets: ', infoPets);
 
-    const urlsDb = urlPhotosDb === "" ? [] : urlPhotosDb;
+    const urlsDb = (urlPhotosDb === "" ? [] : urlPhotosDb) ?? [];
 
     if (pet && pet.status === "adoptable") {
 
