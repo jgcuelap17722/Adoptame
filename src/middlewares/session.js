@@ -17,6 +17,6 @@ export const authMiddleware = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    return res.status(401).send({ message: error.message });
+    return res.status(401).send({ error: error.message });
   }
 };

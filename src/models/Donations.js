@@ -21,6 +21,10 @@ export const Donations = sequelize.define('donations', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  currency: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   status_detail: {
     type: DataTypes.STRING,
     allowNull: true,

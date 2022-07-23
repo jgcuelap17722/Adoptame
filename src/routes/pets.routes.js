@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { upload } from "../middlewares/cloudinary.js";
 import favouritePet from "./favouritePet.routes.js";
+import { authMiddleware } from "../middlewares/session.js";
+import petsDataFake from "./petsDataFake.routes.js";
 
 import {
   getAllPets,
@@ -13,15 +15,16 @@ import {
   findPetsByCity,
   findPetsByCountry,
 } from "../controllers/petsController.js";
-import { authMiddleware } from "../middlewares/session.js";
 
 const router = Router();
 
 router.use("/favourite", favouritePet);
 router.get("/foundation", getPetsFoundation);
 
+
 router.get("/", getAllPets);
 router.get("/:petId", getPetsById);
+router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
 router.get("/pets/city", findPetsByCity);
 router.get("/pets/country", findPetsByCountry);

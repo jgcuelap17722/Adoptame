@@ -25,7 +25,7 @@ export const getPetsById = async (req, res) => {
       return res.status(200).json(detailPet);
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -37,7 +37,7 @@ export const getPetsByIdUser = async (req, res) => {
     return res.status(200).json(petsByUserId);
   } catch (error) {
     console.log(error.message);
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -72,7 +72,7 @@ export const getAllPets = async (req, res) => {
     const allPets = await findAllPets();
     return res.status(200).json(allPets);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -87,43 +87,44 @@ export const getPetsFoundation = async (req, res) => {
     return res.status(200).json(detailPet);
     /* } */
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 export const createPets = async (req, res) => {
   /*
   #swagger.tags = ['PETS']
-  #swagger.consumes = ['multipart/form-data']  
-  #swagger.parameters['photos'] = {
-      in: 'formData',
-      type: 'file',
-      required: 'false',
-      description: 'Selecciona una foto',
-      collectionFormat: 'multi',
-      items: { type: 'file' }
-  }
   #swagger.parameters['body'] = {
-      in: 'body',
+    in: 'body',
       description: 'Some description...',
       schema: {
-        name: "user_test",
-        typeId: "dog",
+        userId: 1,
+        name: "pet test",
+        typeId: "perro",
         breedId: 2,
-        coat: "short",
-        specialCares: false,
+        colorId: 31,
+        age: "joven",
+        gender: "macho",
+        size: "mediano",
+        coat: "largo",
+        health: "vacunas al dia",
+        description: "Alguna descripción para una mascota",
+        tags: ["amigable", "cariñoso"],
         castrated: false,
-        gender: "male",
-        environment: {"children": true,"dogs": null,"cats": null},
-        tags: ["friendly", "affectionate"],
-        size: "medium",
-        color: "marron",
-        age: "young",
-        health: "vaccinations up to date",
-        description: "happy dog",
-        userId: 1
+        attributes: {"house_trained": true,"special_needs": false},
+        environment: {"children": true,"dogs": false,"cats": false}
       }
-  }
+    }
+      #swagger.consumes = ['multipart/form-data']  
+      #swagger.parameters['photos'] = {
+          in: 'formData',
+          type: 'array',
+          required: true,
+          description: 'Selecciona fotos de la mascota',
+          collectionFormat: 'multi',
+          items: { type: 'file' }
+      }
+  #swagger.security = [{"apiKeyAuth": []}] 
   */
 
   const images = req?.files?.length ? req.files.map((image) => image.path) : [];
@@ -208,7 +209,7 @@ export const createPets = async (req, res) => {
       deleteFile(idFile);
     });
     console.log(error);
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -247,8 +248,8 @@ export const updatePets = async (req, res) => {
     } = infoPets;
 
     const pet = await Pets.findByPk(petId);
-    const breed = await BreedPet.findByPk(breedId ? breedId: pet.breedId);
-    const type = await TypePet.findByPk(typeId ? typeId : pet.typeId );
+    const breed = await BreedPet.findByPk(breedId ? breedId : pet.breedId);
+    const type = await TypePet.findByPk(typeId ? typeId : pet.typeId);
     const color = await ColorPet.findByPk(colorId ? colorId : pet.colorId);
 
     console.log('pet: ', pet);
@@ -327,6 +328,7 @@ export const updatePets = async (req, res) => {
         deleteFile(idFile);
       });
 
+
     return res.status(400).json({ message: "pet invalid" });
   } catch (error) {
     imageUploadUrls.length &&
@@ -355,9 +357,9 @@ export const deletePets = async (req, res) => {
       );
       return res.status(200).json({ message: "successfully removed" });
     }
-    return res.status(400).json({ message: "pet invalid" });
+    return res.status(400).json({ error: "pet invalid" });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 
