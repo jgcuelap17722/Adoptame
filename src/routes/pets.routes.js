@@ -12,6 +12,8 @@ import {
   createPets,
   updatePets,
   deletePets,
+  findPetsByCity,
+  findPetsByCountry,
 } from "../controllers/petsController.js";
 
 const router = Router();
@@ -20,6 +22,8 @@ router.use('/favourite', favouritePet)
 router.use('/addPets', petsDataFake);
 
 router.get("/", getAllPets);
+router.get("/city", findPetsByCity);
+router.get("/country", findPetsByCountry);
 router.get("/:petId", getPetsById);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
