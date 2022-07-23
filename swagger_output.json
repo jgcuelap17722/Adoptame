@@ -529,7 +529,7 @@
             "name": "photos",
             "in": "formData",
             "type": "array",
-            "required": false,
+            "required": true,
             "description": "Selecciona fotos de la mascota",
             "collectionFormat": "multi",
             "items": {
@@ -583,6 +583,9 @@
           "PETS"
         ],
         "description": "",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "name": "petId",
@@ -598,13 +601,111 @@
           {
             "name": "body",
             "in": "body",
+            "description": "Some description...",
             "schema": {
               "type": "object",
               "properties": {
-                "data": {
-                  "example": "any"
+                "name": {
+                  "type": "string",
+                  "example": "new name pet test"
+                },
+                "typeId": {
+                  "type": "string",
+                  "example": "perro"
+                },
+                "breedId": {
+                  "type": "number",
+                  "example": 2
+                },
+                "colorId": {
+                  "type": "number",
+                  "example": 31
+                },
+                "age": {
+                  "type": "string",
+                  "example": "joven"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "macho"
+                },
+                "size": {
+                  "type": "string",
+                  "example": "mediano"
+                },
+                "coat": {
+                  "type": "string",
+                  "example": "largo"
+                },
+                "health": {
+                  "type": "string",
+                  "example": "vacunas al dia"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Alguna descripción para una mascota"
+                },
+                "tags": {
+                  "type": "array",
+                  "example": [
+                    "amigable",
+                    "cariñoso"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "castrated": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "attributes": {
+                  "type": "object",
+                  "properties": {
+                    "house_trained": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "special_needs": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                },
+                "environment": {
+                  "type": "object",
+                  "properties": {
+                    "children": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "dogs": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "cats": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                },
+                "urlPhotosDb": {
+                  "type": "array",
+                  "example": [],
+                  "items": {}
                 }
               }
+            }
+          },
+          {
+            "name": "photos",
+            "in": "formData",
+            "type": "array",
+            "required": true,
+            "description": "Selecciona fotos de la mascota",
+            "collectionFormat": "multi",
+            "items": {
+              "type": "file"
             }
           }
         ],
@@ -618,7 +719,12 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
