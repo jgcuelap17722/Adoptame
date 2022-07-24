@@ -435,7 +435,7 @@ export const findCountry = async (name) => {
     attributes: ["name", "id"],
   });
   const countryName = countries.filter(
-    (country) => country.name.toLowerCase() === name.toLowerCase()
+    (country) => country.id.toLowerCase() === name.toLowerCase()
   );
   return countryName;
 };
