@@ -310,6 +310,7 @@ export const findByFoundation = async () => {
 
     // nuevas propiedades
     pet.contact = {
+      name: pet["user.name"],
       email: pet["user.email"],
       phone: pet["user.phone"],
       address: {

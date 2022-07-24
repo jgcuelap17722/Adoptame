@@ -20,9 +20,9 @@ router.use('/favourite', favouritePet)
 router.use('/addPets', petsDataFake);
 
 router.get("/", getAllPets);
-router.get("/:petId", getPetsById);
 router.get("/foundation", getPetsFoundation);
 router.get("/user/:userId", getPetsByIdUser);
+router.get("/:petId", getPetsById);
 
 router.post("/", authMiddleware, upload.array("photos"), createPets);
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
