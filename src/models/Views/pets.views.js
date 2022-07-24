@@ -98,6 +98,7 @@ export const findByUser = async (userId) => {
 
     // nuevas propiedades
     pet.contact = {
+      name: pet["user.name"],
       email: pet["user.email"],
       phone: pet["user.phone"],
       address: {
@@ -170,6 +171,7 @@ export const findAllPets = async () => {
 
     // nuevas propiedades
     pet.contact = {
+      name: pet["user.name"],
       email: pet["user.email"],
       phone: pet["user.phone"],
       address: {
@@ -237,6 +239,7 @@ export const findByPkPets = async (id) => {
 
     // nuevas propiedades
     pet.contact = {
+      name: pet["user.name"],
       email: pet["user.email"],
       phone: pet["user.phone"],
       address: {
