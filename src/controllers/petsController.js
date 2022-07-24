@@ -391,10 +391,8 @@ export const findCity = async (name) => {
   );
   return cityName;
 };
-
 //Route get pets by city
 export const findPetsByCity = async (city, userId) => {
-  // #swagger.tags = ['PETS']
   try {
     const cityName = await findCity(city);
     // const pets = await findAllPets();
@@ -435,13 +433,14 @@ export const findCountry = async (name) => {
     attributes: ["name", "id"],
   });
   const countryName = countries.filter(
-    (country) => country.id.toLowerCase() === name.toLowerCase()
+    (country) => country.name.toLowerCase() === name.toLowerCase()
   );
   return countryName;
 };
 //Route find Pets by Country
 export const findPetsByCountry = async (country, userId) => {
   const countryName = await findCountry(country);
+
   try {
     const allPets = await findAllPets();
     const filteredPets = allPets.filter(
@@ -499,4 +498,3 @@ const petsCountry = async (name) => {
   );
   return filteredPets;
 };
-
