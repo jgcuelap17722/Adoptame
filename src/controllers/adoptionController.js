@@ -78,15 +78,16 @@ try {
         userId: UserData.id,
         solicitud:"Adopcion"
       });
-  
-    
+       
+       let url2 ="devtesting.vercel.app/pet-detail";
+       let button ={text: `${pet.name}`, link: `http://${url2}/${petId}`};
        let header= `Adoptame`;
        let toMail= `${UserData.email}, ${UserOrfoundation.email}`;
-       let subject= `Solicitud de adopcion de ${pet.name} `;
+       let subject= `Solicitud de adopcion `;
        let titulo= `${UserData.name} ha solicitado  el proceso de adopcion de ${pet.name} `;
-       let mensaje= `Nombre: ${UserData.name}, Email: ${UserData.email}, telefono: ${UserData.phone},  ha solicitado el proceso de adopcion de ${pet.name}`;
+       let mensaje= `Nombre: ${UserData.name}, Email: ${UserData.email}, Direccion: ${UserData.address}... Ha solicitado el proceso de adopcion de ${pet.name}`;
 
-        autoMail(header,toMail,subject,titulo,mensaje,undefined);
+        autoMail(header,toMail,subject,titulo,mensaje,button);
     res.json({message: "Se ha enviado su solicitud"})
 } catch (error) {
     console.log(error)
