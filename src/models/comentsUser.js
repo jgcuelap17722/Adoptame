@@ -13,6 +13,10 @@ export const Coments = sequelize.define(
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      starts: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
     },
     {
       timestamps: false,

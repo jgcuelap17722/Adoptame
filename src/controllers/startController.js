@@ -21,7 +21,8 @@ const understand = async (funId) => {
           id : DBcoment.userId,
           name : await userName(DBcoment.userId),
           img : "linkImagenPerfilDelUsuario",
-          coment : DBcoment.comentario
+          coment : DBcoment.comentario,
+          start: DBcoment.starts
         }
       })
       )
@@ -52,17 +53,24 @@ export const prop = async (req, res) => {
       //console.log(tok)
       try { 
       // if(!tok.id) {return res.status(400).json({error : "error de token"})}
-        let coments = understand(id);
-        let comb = (userId) => {for (let i = 0; i < coments.length; i++) {
+        let coments = await understand(id);
+        let comb = (usId) => {for (let i = 0; i < coments.length; i++) {
           const coment = coments[i];
-          if (coment.id === usId) {return true}
+          console.log(coment)
+          if (coment.id == usId) {return true}
         }
         return false}
+        console.log(coments)
+        console.log(comb(userId))
+        console.log(userId)
+        console.log(1)
+        console.log("1")
         if(comb(userId)) {return res.status(400).json({error : "esta cuenta ya ha comentado"})}
         const userComentId = await User.findByPk(userId);
         const createComent = await Coments.create(
             {
-              comentario: msg.coment
+              comentario: msg.coment,
+              starts: msg.point
             }
           );
         await createComent.setUser(userComentId);
