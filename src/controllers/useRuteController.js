@@ -183,8 +183,20 @@ export const updateUser = async (req, res) => {
       },
     });
 
-    const user = await userDetail(id);
-    return res.send(user);
+    const user = await findUserById(id);
+    const dataUser = {
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      country: user.country,
+      city: user.city,
+      address: user.address,
+      phone: user.phone,
+      active: user.active,
+    };
+   
+    return res.send(dataUser);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
