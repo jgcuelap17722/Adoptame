@@ -3,17 +3,18 @@ import { City } from "../models/City.js";
 import { Country } from "../models/Country.js";
 import { User } from "../models/User.js";
 import { findAllUsers, findUserById } from "../models/Views/users.views.js";
-// import { deleteFile } from "../middlewares/cloudinary.js";
+import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
 import { findByUser } from '../models/Views/pets.views.js';
 
 /// POST USER
 export const createUser = async (req, res) => {
   // #swagger.tags = ['USER']
-  // const documentfile = req.files.map((d) => d.path);
-  // const idfiles = req.files.map((d) =>
-  //   d.filename.slice(d.filename.lastIndexOf("/") + 1)
-  // );
+  const documentfile =req?.file?req.file : {}
+  const idfiles = req?.file?req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1): {};
+  const { data } = req.body;
+  const infiUSer =
+    typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
   const {
     name,
     lastName,
@@ -27,8 +28,7 @@ export const createUser = async (req, res) => {
     address,
     phone,
     role,
-    document,
-  } = req.body;
+  } = infiUSer;
   try {
     const user = await User.findOne({
       where: {
@@ -50,8 +50,9 @@ export const createUser = async (req, res) => {
               email,
               role,
               active: false,
-              document: document,
+              document: documentfile.path,
             });
+            console.log(documentfile)
             //password set in undefined for security
             userFundation.set("password", undefined, { strict: false });
             userFundation.setCountry(country);
@@ -99,7 +100,7 @@ export const createUser = async (req, res) => {
       }
       return res.status(404).json({ error: "City and Country is required " });
     } else {
-      // deleteFile(idfiles);
+      deleteFile(idfiles);
       return res.status(400).send({ Error: "email already exist!!" });
     }
     // const data = {
@@ -108,7 +109,7 @@ export const createUser = async (req, res) => {
     // };
     // return res.send(data);
   } catch (error) {
-    // deleteFile[idfiles];
+    deleteFile(idfiles);
     return res.status(500).json({ error: error.message });
   }
 };
