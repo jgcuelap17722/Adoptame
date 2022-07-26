@@ -11,35 +11,35 @@ import { findCity } from "./petsController.js";
 /// POST USER
 export const createUser = async (req, res) => {
   // #swagger.tags = ['USER']
-
-  const documentfile =req?.file?req.file : {}
-  const idfiles = req?.file?req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1): {};
+  const documentfile = req?.file ? req.file : {}
+  const idfiles = req?.file ? req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1) : {};
   const { data } = req.body;
-  const infiUSer =
-    typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
-
-  const {
-    name,
-    lastName,
-    password,
-    email,
-    active,
-    verification,
-    donaciones,
-    countryId,
-    cityId,
-    address,
-    phone,
-    role,
-    document,
-    auth0,
-    photo,
-  } = req.body;
-
+  const infoUser = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
+  console.log("data: ", data);
+  console.log('documentfile', documentfile);
+  console.log("infoUser: ", infoUser);
   try {
+    const {
+      name,
+      lastName,
+      password,
+      email,
+      active,
+      verification,
+      donaciones,
+      countryId,
+      cityId,
+      address,
+      phone,
+      role,
+      document,
+      auth0,
+      photo,
+    } = infoUser;
+
     const user = await User.findOne({
       where: {
-        email,
+        email: email,
       },
     });
     if (user === null) {
@@ -86,7 +86,7 @@ export const createUser = async (req, res) => {
             userFundation.setCity(city);
             Solicitudes.create({
               userId: userFundation.id,
-              solicitud: "Verificacion de documento",
+              solicitud: "Verificacion de documento"
             });
             return res.json({
               message:
@@ -136,6 +136,7 @@ export const createUser = async (req, res) => {
     // };
     // return res.send(data);
   } catch (error) {
+    console.log(error);
     deleteFile(idfiles);
     return res.status(500).json({ error: error.message });
   }
@@ -145,8 +146,8 @@ export const createUser = async (req, res) => {
 export const getUser = async (req, res) => {
   // #swagger.tags = ['USER']
   /* #swagger.security = [{
-      "apiKeyAuth": []
-  }] */
+    "apiKeyAuth": []
+}] */
   try {
     const users = await findAllUsers();
     return res.send(users);
