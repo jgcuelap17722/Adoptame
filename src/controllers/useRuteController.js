@@ -14,31 +14,32 @@ export const createUser = async (req, res) => {
   const documentfile = req?.file ? req.file : {}
   const idfiles = req?.file ? req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1) : {};
   const { data } = req.body;
-  const infiUSer = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
+  const infoUser = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
   console.log("data: ", data);
-  console.log("infiUSer: ", infiUSer);
-  const {
-    name,
-    lastName,
-    password,
-    email,
-    active,
-    verification,
-    donaciones,
-    countryId,
-    cityId,
-    address,
-    phone,
-    role,
-    document,
-    auth0,
-    photo,
-  } = req.body;
-
+  console.log('documentfile', documentfile);
+  console.log("infoUser: ", infoUser);
   try {
+    const {
+      name,
+      lastName,
+      password,
+      email,
+      active,
+      verification,
+      donaciones,
+      countryId,
+      cityId,
+      address,
+      phone,
+      role,
+      document,
+      auth0,
+      photo,
+    } = infoUser;
+
     const user = await User.findOne({
       where: {
-        email,
+        email: email,
       },
     });
     if (user === null) {
