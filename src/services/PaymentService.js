@@ -24,8 +24,8 @@ export const newPreferentialPaymentService = async (dataBody) => {
     auto_return: "all", // solo a pagos aprobados
     back_urls: {
       success: `${ULR_DEPLOYED_FRONTEND}/sponsor/confirm`,
-      failure: `${ULR_DEPLOYED_FRONTEND}/sponsor`,
-      pending: "http://www.pending.com"
+      failure: `${ULR_DEPLOYED_FRONTEND}`,
+      pending: `${ULR_DEPLOYED_FRONTEND}`
     },
     metadata,
     notification_url: `${URL_DEPLOYED_BACKEND}/api/v1.0/donations?source_news=webhooks`,
