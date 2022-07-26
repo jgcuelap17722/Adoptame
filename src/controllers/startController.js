@@ -96,7 +96,7 @@ export const prop = async (req, res) => {
           return res.status(201).json({ msg: "comentario exitosa" });        
       } catch (error) {
         console.log(error)
-        res.status(400).json({error: "error de comentario"})
+        return res.status(400).json({error: "error de comentario"})
       }
 }
 
@@ -127,6 +127,6 @@ export const starts = async (req, res) => {
         return res.status(200).json({puntuacion: prom, comentarios: commit});
     } catch (error) {
         console.log(error)
-        res.status(400).json({erro: "error de promedio"})
+        return res.status(400).json({erro: "error de promedio"})
     }
 }

@@ -62,7 +62,7 @@ export const getproces = async (req,res)=>{
      }
       
     } catch (error) {
-        res.json({error:error})
+        return res.json({error:error})
     }
 
 
@@ -88,10 +88,10 @@ try {
        let mensaje= `Nombre: ${UserData.name}, Email: ${UserData.email}, Direccion: ${UserData.address}... Ha solicitado el proceso de adopcion de ${pet.name}`;
 
         autoMail(header,toMail,subject,titulo,mensaje,button);
-    res.json({message: "Se ha enviado su solicitud"})
+        return res.json({message: "Se ha enviado su solicitud"})
 } catch (error) {
     console.log(error)
-    res.json({ error:error })
+    return res.json({ error:error })
 }
 
 }
