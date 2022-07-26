@@ -11,7 +11,7 @@ import {
   getPetsFoundation,
   createPets,
   updatePets,
-  deletePets,
+  changeStatusPets,
 } from "../controllers/petsController.js";
 
 const router = Router();
@@ -26,6 +26,6 @@ router.get("/:petId", getPetsById);
 
 router.post("/", authMiddleware, upload.array("photos"), createPets);
 router.put("/:petId", authMiddleware, upload.array("photos"), updatePets);
-router.delete("/:petId", authMiddleware, deletePets);
+router.patch("/:petId", authMiddleware, changeStatusPets);
 
 export default router;

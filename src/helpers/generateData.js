@@ -91,7 +91,7 @@ export const generateDataPets = async (results, ids) => {
         dogs: faker.helpers.arrayElement([true, false, null]),
         cats: faker.helpers.arrayElement([true, false, null]),
       }])),
-      status: faker.helpers.arrayElement(pets[0].status),
+      status: faker.helpers.arrayElement(['adoptable', 'adoptado']),
       photos: faker.helpers.arrayElement(type === 'gato' ? pets[0].photos : pets[1].photos),
     };
   }
