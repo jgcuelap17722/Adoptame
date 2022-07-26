@@ -10,14 +10,14 @@ export const findUserById = async (id) => {
     id,
     { include: Pets },
     { include: Solicitudes },
-    {include: Match}
+    { include: Match }
   );
   if (user) {
     const pets = await Pets.findAll({ where: { userId: id } });
     const city = await City.findByPk(user.cityId);
     const country = await Country.findByPk(user.countryId);
     const soli = await Solicitudes.findAll({ where: { userId: id } });
-    const macth= await Match.findOne({where: {userId:id}})
+    const macth = await Match.findOne({ where: { userId: id } });
     const dataUser = {
       name: user.name,
       lastName: user.lastName,
@@ -33,7 +33,7 @@ export const findUserById = async (id) => {
       document: user.document,
       pets: pets.map((e) => e),
       solicitudes: soli.map((e) => e),
-      match:macth
+      match: macth,
     };
 
     return dataUser;
@@ -48,26 +48,33 @@ export const getCountry = async (id) => {
 };
 
 export const getCity = async (id) => {
-  const city = await City.findByPk(id);
-  return city.name;
+  const cityName = await City.findByPk(id);
+  return cityName;
 };
 
 export const findAllUsers = async () => {
   const users = await User.findAll();
   const dataUsers = await Promise.all(
     users.map(async (user) => {
+    
+  
       return {
         name: user.name,
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-        donaciones: user.donaciones,
-        country: await getCountry(user.countryId),
-        city: await getCity(user.cityId),
-        address: user.address,
-        phone: user.phone,
         active: user.active,
         verification: user.verification,
+        donaciones: user.donaciones,
+        address: user.address,
+        phone: user.phone,
+        document: user.document,
+        photo: user.photo,
+        starts: user.starts,
+        comentario: user.comentario,
+        points: user.points,
+        country: await getCountry(user.countryId),
+        city:  await getCity(user.cityId),
       };
     })
   );
