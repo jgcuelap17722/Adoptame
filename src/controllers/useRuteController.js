@@ -15,6 +15,8 @@ export const createUser = async (req, res) => {
   const idfiles = req?.file ? req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1) : {};
   const { data } = req.body;
   const infiUSer = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
+  console.log("data: ", data);
+  console.log("infiUSer: ", infiUSer);
   const {
     name,
     lastName,
