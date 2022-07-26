@@ -1,7 +1,94 @@
 import { Donations } from '../models/Donations.js';
-import { getPaymentByIdService, getPaymentsService } from '../services/PaymentService.js';
 import { autoEmail } from '../helpers/sendEmails.js';
-import { findDonationById } from '../models/Views/donations.views.js';
+import { getPaymentByIdService, getPaymentsService } from '../services/PaymentService.js';
+import { findDonationByUserId, findAllDonations } from '../models/Views/donations.views.js';
+
+const updateStateAndSendEmail = async () => {
+  try {
+    const paymentsMercadoPago = await getPaymentsService();
+
+    paymentsMercadoPago.forEach(pay => {
+      console.log(pay.id);
+    });
+
+    const foundationDonations = await Donations.findAll({
+      attributes: ["idPaymentMercadoPago", "status", "id"]
+    })
+
+    const updateStatusDonations = foundationDonations.map((donation) => {
+
+      const paymentMercadoPago = paymentsMercadoPago.find(payment => payment.id == donation.idPaymentMercadoPago)
+
+      console.log('paymentMercadoPago: ', paymentMercadoPago);
+
+      const {
+        id, // idPaymentMercadoPago
+        metadata,
+        status,
+        status_detail,
+        fee_details,
+        transaction_details,
+        currency_id,
+      } = paymentMercadoPago;
+
+      const { from_user, to_user } = metadata;
+
+      if (donation.status !== status) {
+
+        const newDonation = {
+          approved: async () => {
+            let mailDetail = {
+              header: `Adoptame`,
+              toMail: to_user.email,
+              subject: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
+              titulo: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
+              mensaje: `Para la fundación: ${to_user.name}`,
+            }
+            autoEmail(mailDetail)
+            return Donations.update({
+              status,
+              status_detail,
+              comision_amount: fee_details[0]?.amount ?? 0,
+              acredit_amount: transaction_details.net_received_amount,
+              total_amount: transaction_details.total_paid_amount,
+              currency: currency_id
+            }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+            })
+          },
+          in_process: async () => {
+            return Donations.update({ status }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+            })
+          },
+          rejected: async () => {
+            return Donations.update({ status }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+            })
+          },
+          default: () => {
+            return Donations.update({ status }, {
+              where: {
+                idPaymentMercadoPago: donation.idPaymentMercadoPago
+              },
+            })
+          }
+        }
+        return newDonation[status]() || newDonation.default();
+      }
+    });
+    await Promise.all(updateStatusDonations);
+  } catch (error) {
+    console.log(error);
+    return { error: error.message };
+  }
+}
 
 export const createDonation = async (req, res) => {
   // #swagger.tags = ['DONATION']
@@ -42,16 +129,16 @@ export const createDonation = async (req, res) => {
       }
 
       const newDonation = {
-        approved: (infoDonation) => {
+        approved: () => {
           autoEmail(mailDetail)
-          return res.status(201).json({ data: infoDonation, message: "successfully donated" })
+          return res.status(201).json({ message: "successfully donated" })
         },
-        in_process: (infoDonation) => res.status(201).json({ data: infoDonation, message: "pending donation" }),
-        rejected: (infoDonation) => res.status(201).json({ data: infoDonation, message: "donation rejected" }),
-        default: (infoDonation) => res.status(201).json({ data: infoDonation, error: "error" })
+        in_process: () => res.status(201).json({ message: "pending donation" }),
+        rejected: () => res.status(201).json({ message: "donation rejected" }),
+        default: () => res.status(201).json({ error: "error" })
       }
-      const infoDonation = await Donations.create(infoPayment)
-      return newDonation[status](infoDonation) || newDonation.default
+      await Donations.create(infoPayment)
+      return newDonation[status]() || newDonation.default
     }
     return res.status(400).json({ data: req.body });
   } catch (error) {
@@ -60,258 +147,30 @@ export const createDonation = async (req, res) => {
   }
 }
 
-export const getDonationsById = async (req, res) => {
+export const getDonationsByUserId = async (req, res) => {
   // #swagger.tags = ['DONATION']
   try {
     const { userId } = req.params;
-    const paymentsMercadoPago = await getPaymentsService();
 
-    const foundationDonations = await Donations.findAll({
-      attributes: ["idPaymentMercadoPago", "status", "id"],
-      where: {
-        toUserId: userId
-      }
-    })
+    await updateStateAndSendEmail();
 
-    const updateStatusDonations = foundationDonations.map(async (donation) => {
-      const paymentMercadoPago = paymentsMercadoPago.find(payment => payment.id == donation.idPaymentMercadoPago)
+    const donationsByUser = await findDonationByUserId(userId);
 
-      const {
-        id, // idPaymentMercadoPago
-        metadata,
-        status,
-        status_detail,
-        fee_details,
-        transaction_details,
-        currency_id,
-      } = paymentMercadoPago;
-
-      const { from_user, to_user } = metadata;
-
-      if (donation.status !== status) {
-
-        const newDonation = {
-          approved: async () => {
-            let mailDetail = {
-              header: `Adoptame`,
-              toMail: to_user.email,
-              subject: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-              titulo: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-              mensaje: `Para la fundación: ${to_user.name}`,
-            }
-            autoEmail(mailDetail)
-
-            const updateStatus = await Donations.update({
-              status: status,
-              status_detail: status_detail,
-              comision_amount: fee_details[0]?.amount ?? 0,
-              acredit_amount: transaction_details.net_received_amount,
-              total_amount: transaction_details.total_paid_amount,
-              currency: currency_id
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-            return await findDonationById(updateStatus.idPaymentMercadoPago);
-          },
-          in_process: async () => {
-            const updateStatus = await Donations.update({
-              status: status
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-            return await findDonationById(updateStatus.idPaymentMercadoPago);
-          },
-          rejected: async () => {
-            const updateStatus = await Donations.update({
-              status: status
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-            return await findDonationById(updateStatus.idPaymentMercadoPago);
-          },
-          default: () => { }
-        }
-
-        /*         switch (status) {
-                  case 'in_process':
-                    return Donations.update({
-                      status: status
-                    }, {
-                      where: {
-                        idPaymentMercadoPago: donation.idPaymentMercadoPago
-                      },
-                      returning: true,
-                      plain: true,
-                    })
-                  case 'rejected':
-                    return Donations.update({
-                      status: status
-                    }, {
-                      where: {
-                        idPaymentMercadoPago: donation.idPaymentMercadoPago
-                      },
-                      returning: true,
-                      plain: true,
-                    })
-                  case 'approved':
-        
-                    let mailDetail = {
-                      header: `Adoptame`,
-                      toMail: to_user.email,
-                      subject: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-                      titulo: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-                      mensaje: `Para la fundación: ${to_user.name}`,
-                    }
-                    autoEmail(mailDetail)
-        
-                    return await Donations.update({
-                      status: status,
-                      status_detail: status_detail,
-                      comision_amount: fee_details[0]?.amount ?? 0,
-                      acredit_amount: transaction_details.net_received_amount,
-                      total_amount: transaction_details.total_paid_amount,
-                      currency: currency_id
-                    }, {
-                      where: {
-                        idPaymentMercadoPago: donation.idPaymentMercadoPago
-                      },
-                      returning: true,
-                      plain: true,
-                    })
-                  default:
-                    break;
-                } */
-
-        return newDonation[status]()
-      }
-      return findDonationById(donation.id);
-/*       return Donations.findOne({
-        attributes: { exclude: ['idPaymentMercadoPago'] },
-
-        where: {
-          id: donation.id
-        }
-      }) */
-    });
-
-    await Promise.all(updateStatusDonations);
-    const donations = await Donations.findAll({
-      attributes: { exclude: ['idPaymentMercadoPago'] },
-      where: {
-        toUserId: userId
-      }
-    })
-    return res.status(200).json(donations);
+    return res.status(200).json(donationsByUser);
   } catch (error) {
     console.log(error);
     return res.status(400).json({ error: error.message });
   }
 }
 
-export const getDonations = async (req, res) => {
+export const getAllDonations = async (req, res) => {
   // #swagger.tags = ['DONATION']
   try {
-    const paymentsMercadoPago = await getPaymentsService();
+    await updateStateAndSendEmail();
 
-    const foundationDonations = await Donations.findAll({
-      attributes: ["idPaymentMercadoPago", "status", "id"]
-    })
+    const allDonations = await findAllDonations();
 
-    const updateStatusDonations = foundationDonations.map(async (donation) => {
-      const paymentMercadoPago = paymentsMercadoPago.find(payment => payment.id == donation.idPaymentMercadoPago)
-
-      const {
-        id, // idPaymentMercadoPago
-        metadata,
-        status,
-        status_detail,
-        fee_details,
-        transaction_details,
-        currency_id,
-      } = paymentMercadoPago;
-
-      const {
-        from_user,
-        to_user,
-      } = metadata;
-
-      if (donation.status !== status) {
-        switch (status) {
-          case 'in_process':
-            return Donations.update({
-              status: status
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-          case 'rejected':
-            return Donations.update({
-              status: status
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-          case 'approved':
-
-            let mailDetail = {
-              header: `Adoptame`,
-              toMail: to_user.email,
-              subject: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-              titulo: `${from_user.name} te ha donado ${transaction_details.net_received_amount} ${currency_id}`,
-              mensaje: `Para la fundación: ${to_user.name}`,
-            }
-            autoEmail(mailDetail)
-
-            return await Donations.update({
-              status: status,
-              status_detail: status_detail,
-              comision_amount: fee_details[0]?.amount ?? 0,
-              acredit_amount: transaction_details.net_received_amount,
-              total_amount: transaction_details.total_paid_amount,
-              currency: currency_id
-            }, {
-              where: {
-                idPaymentMercadoPago: donation.idPaymentMercadoPago
-              },
-              returning: true,
-              plain: true,
-            })
-          default:
-            break;
-        }
-      }
-
-      return Donations.findOne({
-        attributes: { exclude: ['idPaymentMercadoPago'] },
-        where: {
-          id: donation.id
-        }
-      })
-    });
-
-    await Promise.all(updateStatusDonations);
-    const donations = await Donations.findAll({
-      attributes: { exclude: ['idPaymentMercadoPago'] }
-    })
-    return res.status(200).json(donations);
+    return res.status(200).json(allDonations);
   } catch (error) {
     console.log(error);
     return res.status(400).json({ error: error.message });

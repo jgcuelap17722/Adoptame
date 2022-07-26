@@ -1,11 +1,9 @@
 import { Donations } from '../../models/Donations.js';
 
-export const findDonationById = async (donationId) => {
-  const donation = Donations.findOne({
-    attributes: { exclude: ['idPaymentMercadoPago'] },
-    where: {
-      idPaymentMercadoPago: donationId
-    }
+export const findAllDonations = async () => {
+  const allDonations = await Donations.findAll({
+    attributes: { exclude: ['idPaymentMercadoPago', 'status_detail'] },
+    raw: true
   })
 
   let nameStatus = {
@@ -14,13 +12,13 @@ export const findDonationById = async (donationId) => {
     rejected: "rechazado"
   }
 
-  return {
-    ...donation,
-    status : nameStatus[donation.status],
-  }
+  return allDonations.map(donation => {
+    donation.status = nameStatus[donation.status]
+    return donation
+  })
 }
 
-export const findAllDonations = async () => {
-
+export const findDonationByUserId = async (userId) => {
+  const allDonations = await findAllDonations();
+  return allDonations.filter(donation => donation.toUserId == userId)
 }
-
