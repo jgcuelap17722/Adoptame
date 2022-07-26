@@ -40,7 +40,7 @@ export const veriEmail = async (req, res) => {
                 autoMail(from, to, from,titulo, info, button)
                 
                 
-                res.status(200).json({msg: "send email"})
+                return res.status(200).json({msg: "send email"})
         }
 
 
@@ -59,15 +59,15 @@ export const logVerify = async (req, res) => {
             where:{id:info.id}
           })
         
-          if (!busqueda) {res.json({error: "verification fail"})}
+          if (!busqueda) {return res.json({error: "verification fail"})}
 
           await User.update({verification: true}, {where: {id: info.id}})
 
-          res.json({msg: "verified email"})
+          return res.json({msg: "verified email"})
          
     } catch (error) {
         console.log(error)
-        res.json({error: "verification fail"})
+        return res.json({error: "verification fail"})
     }
 }
 export const petiPass = async (req, res) => {
@@ -77,7 +77,7 @@ export const petiPass = async (req, res) => {
       let busqueda = await User.findOne({
           where:{email:email}
         })
-        if (!busqueda) {res.status(400).json({error: "the email is not registered"})}
+        if (!busqueda) {return res.status(400).json({error: "the email is not registered"})}
         
         // let token = tokenSing(busqueda)
         let token = jwt.sign(
@@ -99,11 +99,11 @@ export const petiPass = async (req, res) => {
 
             autoMail(from, to, from,titulo, info, button)
 
-            res.json({msg: "send email"})
+            return res.json({msg: "send email"})
         
     } catch (error) {
         console.log(error)
-        res.json({error: "verification fail"})
+        return res.json({error: "verification fail"})
     }
 }
 export const recuperated = async (req, res) => {
@@ -119,11 +119,11 @@ export const recuperated = async (req, res) => {
         if (password1!==password2) {return res.status(400).json({error: "the password does not match"})}
         let passwordHash = await encrypt(password1);
         await User.update({password: passwordHash}, {where: {id: info.id}})
-        res.status(200).json({msg: "updated password"})
+        return res.status(200).json({msg: "updated password"})
         
         
     } catch (error) {
         console.log(error)
-        res.json({error: "verification fail"})
+        return res.json({error: "verification fail"})
     }
 }

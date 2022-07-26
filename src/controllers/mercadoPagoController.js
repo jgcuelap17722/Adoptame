@@ -8,32 +8,25 @@ import {
 export const createPreferentialPayment = async (req, res) => {
   // #swagger.tags = ['MERCADOPAGO']
   try {
-
-    // capturar el body del front
-
     const {
       items,
       payer,
       metadata
     } = req.body;
 
-    const currency = await Country.findByPk(metadata.fromUser.country, {
-      raw: true
-    });
+    const currency = await Country.findByPk(metadata.fromUser.country);
 
     const body = {
       items: items.map(item => {
         return {
           ...item,
-          currency_id: currency?.country?.id
-            ? currency?.country?.id
-            : "PEN" // Por defecto
+          currency_id: currency?.currency ?? "PEN" // Por defecto
         }
       }),
       payer,
       metadata
     };
-    console.log(body);
+    console.log('data Preferential: ', body);
     const urlPreferentialPayment = await newPreferentialPaymentService(body);
     return res.status(201).json({
       urlPreferentialPayment,
@@ -41,7 +34,6 @@ export const createPreferentialPayment = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-
     return res
       .status(500)
       .json({ error: true, msg: "Failed to create payment" });
