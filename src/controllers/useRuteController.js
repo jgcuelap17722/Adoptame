@@ -5,7 +5,8 @@ import { User } from "../models/User.js";
 import { findAllUsers, findUserById } from "../models/Views/users.views.js";
 import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
-import { findByUser } from '../models/Views/pets.views.js';
+import { findByUser } from "../models/Views/pets.views.js";
+import { findCity } from "./petsController.js";
 
 /// POST USER
 export const createUser = async (req, res) => {
@@ -27,7 +28,11 @@ export const createUser = async (req, res) => {
     address,
     phone,
     role,
-  } = infiUSer;
+    document,
+    auth0,
+    photo,
+  } = req.body;
+
   try {
     const user = await User.findOne({
       where: {
@@ -35,6 +40,26 @@ export const createUser = async (req, res) => {
       },
     });
     if (user === null) {
+      if (auth0) {
+        const cityName = await findCity(cityId);
+        const country = await Country.findByPk(countryId);
+        const city = await City.findByPk(cityName[0].id);
+        const passwordHash = await encrypt(password);
+        const user = await User.create({
+          name,
+          lastName,
+          password: passwordHash,
+          email,
+          active,
+        });
+        //password set in undefined for security
+        user.set("password", undefined, { strict: false });
+        user.setCountry(country);
+        user.setCity(city);
+        return res.json({
+          message: "User Created Successfully!",
+        });
+      }
       const country = await Country.findByPk(countryId);
       const city = await City.findByPk(cityId);
       if (country && city) {
@@ -124,7 +149,7 @@ export const getUser = async (req, res) => {
     const users = await findAllUsers();
     return res.send(users);
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 

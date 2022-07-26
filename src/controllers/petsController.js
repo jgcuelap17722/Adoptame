@@ -386,7 +386,7 @@ export const changeStatusPets = async (req, res) => {
 // Funtion get city
 export const findCity = async (name) => {
   const cities = await City.findAll({
-    attributes: ["name"],
+    attributes: ["name", "id"],
   });
   const cityName = cities.filter(
     (city) => city.name.toLowerCase() === name.toLowerCase()
