@@ -151,8 +151,8 @@ export const createPets = async (req, res) => {
     ? req.files.map(image => image.path) : [];
   const idFiles = req?.files?.length
     ? req.files.map((img) =>
-        img.filename.slice(img.filename.lastIndexOf("/") + 1)
-      )
+      img.filename.slice(img.filename.lastIndexOf("/") + 1)
+    )
     : [];
   try {
     const { data } = req.body;
@@ -264,8 +264,8 @@ export const updatePets = async (req, res) => {
     : [];
   const idUploadImages = req?.files?.length
     ? req.files.map((img) =>
-        img.filename.slice(img.filename.lastIndexOf("/") + 1)
-      )
+      img.filename.slice(img.filename.lastIndexOf("/") + 1)
+    )
     : [];
   try {
     const { data } = req.body;
@@ -360,23 +360,25 @@ export const updatePets = async (req, res) => {
 
 }
 
-export const deletePets = async (req, res) => {
+export const changeStatusPets = async (req, res) => {
   // #swagger.tags = ['PETS']
   try {
     const { petId } = req.params;
-    const pet = await Pets.findByPk(petId);
+    const { status } = req.body;
+
+    const pet = await Pets.findOne({
+      where: {
+        id: petId
+      }
+    });
+
     if (pet) {
-      await Pets.update({
-        status: "adopted",
-      }, {
-        where: {
-          id: petId
-        }
-      });
-      return res.status(200).json({ message: "successfully removed" });
+      await pet.update({ status });
+      return res.status(201).json({ message: "successfully changed status" });
     }
-    return res.status(400).json({ error: "pet invalid" });
+    return res.status(400).json({ error: "no exist pet" });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ error: error.message });
   }
 }

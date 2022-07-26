@@ -72,6 +72,9 @@ export const findAllPets = async () => {
         ]
       }
     ],
+    where: {
+      status: 'adoptable' || 'adoptado'
+    },
     raw: true,
   });
 
