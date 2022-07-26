@@ -2,7 +2,7 @@ export const organizations = [
     {
       "id": 1,
       "name": "Special Touch Animal Rescue",
-      "email": "STARRadopt@aol.com",
+      "email": "johnj42.dev@gmail.com",
       "phone": "(404) 983-3581",
       "address": {
         "address1": null,
@@ -105,7 +105,7 @@ export const organizations = [
     {
       "id":3,
       "name": "Arizona Shih Tzu and Small Breed Rescue",
-      "email": "ASTSBR@Gmail.com",
+      "email": "emilandresaravena@outlook.es",
       "phone": null,
       "address": {
         "address1": null,
