@@ -74,7 +74,7 @@ export const DeleteMatch = async (req, res) => {
     if (id) {
       const match = await Match.findOne({ where: { id: id } })
       if (!match) {
-        res.json({ message: "no se encotro el id de este match en la base de datos" })
+        return res.json({ message: "no se encotro el id de este match en la base de datos" })
 
       } else {
         await Match.destroy({
@@ -82,11 +82,11 @@ export const DeleteMatch = async (req, res) => {
             id: id
           }
         })
-        res.json({ message: "Match eliminado" })
+        return res.json({ message: "Match eliminado" })
       }
     }
   } catch (error) {
-    res.json({ message: error })
+    return res.json({ message: error })
   }
 
 }

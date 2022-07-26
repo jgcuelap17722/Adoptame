@@ -24,8 +24,8 @@ export const newPreferentialPaymentService = async (dataBody) => {
     auto_return: "all", // solo a pagos aprobados
     back_urls: {
       success: `${ULR_DEPLOYED_FRONTEND}/sponsor/confirm`,
-      failure: `${ULR_DEPLOYED_FRONTEND}/sponsor`,
-      pending: "http://www.pending.com"
+      failure: `${ULR_DEPLOYED_FRONTEND}`,
+      pending: `${ULR_DEPLOYED_FRONTEND}`
     },
     metadata,
     notification_url: `${URL_DEPLOYED_BACKEND}/api/v1.0/donations?source_news=webhooks`,
@@ -61,8 +61,6 @@ export const getPaymentsService = async () => {
   const external_reference = APP_ID_MERCADOPAGO
 
   const url = `https://api.mercadopago.com/v1/payments/search?sort=${sort}&criteria=${criteria}&external_reference=${external_reference}`;
-
-  console.log('url', url);
 
   const { data } = await axios.get(url, {
     headers: {
