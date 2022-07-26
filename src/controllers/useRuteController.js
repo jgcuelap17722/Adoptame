@@ -10,11 +10,10 @@ import { findByUser } from '../models/Views/pets.views.js';
 /// POST USER
 export const createUser = async (req, res) => {
   // #swagger.tags = ['USER']
-  const documentfile =req?.file?req.file : {}
-  const idfiles = req?.file?req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1): {};
+  const documentfile = req?.file ? req.file : {}
+  const idfiles = req?.file ? req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1) : {};
   const { data } = req.body;
-  const infiUSer =
-    typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
+  const infiUSer = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
   const {
     name,
     lastName,
@@ -59,7 +58,7 @@ export const createUser = async (req, res) => {
             userFundation.setCity(city);
             Solicitudes.create({
               userId: userFundation.id,
-              solicitud:"Verificacion de documento"
+              solicitud: "Verificacion de documento"
             });
             return res.json({
               message:
@@ -109,6 +108,7 @@ export const createUser = async (req, res) => {
     // };
     // return res.send(data);
   } catch (error) {
+    console.log(error);
     deleteFile(idfiles);
     return res.status(500).json({ error: error.message });
   }
@@ -117,9 +117,9 @@ export const createUser = async (req, res) => {
 /// GET USER
 export const getUser = async (req, res) => {
   // #swagger.tags = ['USER']
-    /* #swagger.security = [{
-      "apiKeyAuth": []
-  }] */
+  /* #swagger.security = [{
+    "apiKeyAuth": []
+}] */
   try {
     const users = await findAllUsers();
     return res.send(users);
@@ -196,7 +196,7 @@ export const updateUser = async (req, res) => {
       phone: user.phone,
       active: user.active,
     };
-   
+
     return res.send(dataUser);
   } catch (error) {
     return res.status(500).json({ error: error.message });
