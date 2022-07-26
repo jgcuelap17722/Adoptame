@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { getDonations, createDonation, getDonationsById } from "../controllers/donationController.js";
+import {
+  getAllDonations,
+  createDonation,
+  getDonationsByUserId
+} from "../controllers/donationController.js";
 import {
   createPreferentialPayment,
   getPaymentById,
@@ -14,7 +18,7 @@ router.get("/mercadopago", getAllPayments);
 router.get("/mercadopago/:idPayment", getPaymentById);
 
 router.post("/", createDonation);
-router.get("/", getDonations);
-router.get("/:userId", getDonationsById);
+router.get("/", getAllDonations);
+router.get("/:userId", getDonationsByUserId);
 
 export default router;

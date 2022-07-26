@@ -62,8 +62,6 @@ export const getPaymentsService = async () => {
 
   const url = `https://api.mercadopago.com/v1/payments/search?sort=${sort}&criteria=${criteria}&external_reference=${external_reference}`;
 
-  console.log('url', url);
-
   const { data } = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${MERCADOPAGO_ACCESS_TOKEN}`
