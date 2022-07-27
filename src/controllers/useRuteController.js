@@ -137,11 +137,6 @@ export const createUser = async (req, res) => {
       // deleteFile(idfiles);
       return res.status(400).send(user);
     }
-    // const data = {
-    //   token: await tokenSing(userFundationCountry),
-    //   user: userFundationCountry,
-    // };
-    // return res.send(data);
   } catch (error) {
     // deleteFile[idfiles];
     return res.status(500).json({ error: error.message });
