@@ -128,7 +128,7 @@ export const createUser = async (req, res) => {
       return res.status(404).json({ error: "City and Country is required " });
     } else {
       deleteFile(idfiles);
-      return res.status(400).send({ Error: "email already exist!!" });
+      return res.status(400).send(user);
     }
     // const data = {
     //   token: await tokenSing(userFundationCountry),
