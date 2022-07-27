@@ -143,7 +143,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-/// GET USER
+/// GET USERS
 export const getUser = async (req, res) => {
   // #swagger.tags = ['USER']
   /* #swagger.security = [{
