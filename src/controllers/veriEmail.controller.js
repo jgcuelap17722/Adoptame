@@ -2,8 +2,8 @@ import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { encrypt } from "../helpers/handleBcrypt.js";
 import { autoMail } from "../helpers/sendEmails.js";
-const { URL_FRONT, JWT_SECRET } = process.env;
-const url = URL_FRONT || "localhost:5000";
+const { ULR_DEPLOYED_FRONTEND, JWT_SECRET } = process.env;
+const url = ULR_DEPLOYED_FRONTEND || "localhost:5000";
 
 
 
@@ -27,11 +27,10 @@ export const veriEmail = async (req, res) => {
                 {
                     expiresIn: 900,
                 }
-                );
+                ); 
 
-
-                let url2 ="adoptame.vercel.app/email-confirmed"
-                let button ={text: "confirmacion de correo", link: `http://${url2}/api/v1.0/verify/tk/${token}`}
+                //let url2 ="adoptame.vercel.app"
+                let button ={text: "confirmacion de correo", link: `${url}/email-confirmed/api/v1.0/verify/tk/${token}`}
                 let info = "Te has registrado exitosamente en adoptaMe, por favor confirma tu correo abajo"
                 let from = "Verification email";
                 let to = email;
