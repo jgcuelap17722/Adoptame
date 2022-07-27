@@ -27,7 +27,7 @@ export const veriEmail = async (req, res) => {
                 {
                     expiresIn: 900,
                 }
-                );
+                ); 
 
                 //let url2 ="adoptame.vercel.app"
                 let button ={text: "confirmacion de correo", link: `${url}/email-confirmed/api/v1.0/verify/tk/${token}`}
