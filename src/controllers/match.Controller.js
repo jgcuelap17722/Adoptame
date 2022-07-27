@@ -93,29 +93,15 @@ export const DeleteMatch = async (req, res) => {
 }
 
 export const getPetsMatch = async (req,res)=>{
+  // #swagger.tags = ['MATCH']
+  const {userId}=req.params;
   try {
     const {userId}=req.params;
     const match= await Match.findOne({where:{
       userId:userId
     }})
     if(match){
-          const pets= await findAllPets();
-    // pet:{
-    //   age:pet.age,
-    //   coat:pet.coat,
-    //   genre:pet.gender,
-    //   size:pet.size,
-    //   type:pet.typeId
-    //   },
-    //   user:{
-    //     age:match.age, 
-    //     coat:match.coat,  
-    //     genre:match.genre ,
-    //     haTenidoMascota:match.haTenidoMascota, 
-    //     size:match.size, 
-    //     type:match.type
-    //     }
-     
+    const pets= await findAllPets();
     const filterPets=  pets.filter(p=> p.age===match.age && p.coat===match.coat && p.type===match.type
                                     || p.age===match.age && p.gender===match.genre && p.type===match.type
                                     || p.age===match.age && p.size===match.size && p.type===match.type
@@ -127,15 +113,9 @@ export const getPetsMatch = async (req,res)=>{
                                     || p.size===match.size && p.type===match.type
                                     || p.gender===match.genre && p.type===match.type)
     res.send(filterPets)
-    console.log("entro aca")
     }else{
-      const pets= await findAllPets();
-      res.send(pets)
-      console.log("sino aca")
-
-    }
-
-     
+       res.status(404).json({error:"no se consigue matchs con tus preferencias"})
+    }  
   } catch (error) {
     res.json({error:error})
     console.log(error)

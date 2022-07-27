@@ -7,6 +7,6 @@ const router = Router();
 router.post('/:userId', authMiddleware, matchPet)
 router.put('/matchUser/:id', authMiddleware, PutMachUser)
 router.delete('/delete/:id', authMiddleware, DeleteMatch)
-router.get('/petMatch/:userId',getPetsMatch )
+router.get('/petMatch/:userId',authMiddleware, getPetsMatch )
 
 export default router;
