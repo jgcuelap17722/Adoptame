@@ -6,6 +6,7 @@ import { verifyToken } from "../helpers/handleJwt.js";
 export const authMiddleware = async (req, res, next) => {
   const { authorization, auth0 } = req.headers;
   try {
+    //Validations
     if(!authorization){
       return res.status(401).json({Error: "User not authenticate"})
     }
