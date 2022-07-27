@@ -14,13 +14,17 @@ export const createPreferentialPayment = async (req, res) => {
       metadata
     } = req.body;
 
-    const currency = await Country.findByPk(metadata.fromUser.country);
-
+    // const currency = await Country.findByPk(metadata.fromUser.country);
+    const country = await Country.findOne({
+      where: {
+        name: metadata.fromUser.country
+      }
+    })
     const body = {
       items: items.map(item => {
         return {
           ...item,
-          currency_id: currency?.currency ?? "PEN" // Por defecto
+          currency_id: country?.currency ?? "ARS" // Por defecto
         }
       }),
       payer,
