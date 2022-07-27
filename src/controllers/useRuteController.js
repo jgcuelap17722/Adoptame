@@ -58,20 +58,18 @@ export const createUser = async (req, res) => {
         const country = await Country.findByPk(countryId);
         const city = await City.findByPk(cityName[0].id);
         const passwordHash = await encrypt(password);
-        const user = await User.create({
+        const userCreated = await User.create({
+          email,
           name,
           lastName,
           password: passwordHash,
-          email,
-          active,
+          role,
         });
         //password set in undefined for security
-        user.set("password", undefined, { strict: false });
-        user.setCountry(country);
-        user.setCity(city);
-        return res.json({
-          message: "User Created Successfully!",
-        });
+         userCreated.set("password", undefined, { strict: false });
+         userCreated.setCountry(country);
+         userCreated.setCity(city);
+        return res.json({Ok: "User created successfully"});
       }
       const country = await Country.findByPk(countryId);
       const city = await City.findByPk(cityId);
@@ -137,7 +135,7 @@ export const createUser = async (req, res) => {
       return res.status(404).json({ error: "City and Country is required " });
     } else {
       // deleteFile(idfiles);
-      return res.status(400).send({ Error: "email already exist!!" });
+      return res.status(400).send(user);
     }
     // const data = {
     //   token: await tokenSing(userFundationCountry),
