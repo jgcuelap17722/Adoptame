@@ -96,7 +96,7 @@ export const getPetsMatch = async (req,res)=>{
   // #swagger.tags = ['MATCH']
   const {userId}=req.params;
   try {
-    const {userId}=req.params;
+
     const match= await Match.findOne({where:{
       userId:userId
     }})
