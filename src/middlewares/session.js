@@ -5,9 +5,14 @@ import { verifyToken } from "../helpers/handleJwt.js";
 //Middleware para cuando nos toque usar rutas protegidas para usuario normal y fundacion.
 export const authMiddleware = async (req, res, next) => {
   const { authorization, auth0 } = req.headers;
-  const token = authorization.split(" ").pop();
   try {
+    if(!authorization){
+      return res.status(401).json({Error: "User not authenticate"})
+    }
+    const token = authorization.split(" ").pop();
+    
     if (!auth0) {
+   
       if (!authorization) {
         return res.status(401).send({ Error: "User not authenticate" });
       }
