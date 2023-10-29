@@ -20,7 +20,7 @@ import {
 const PORT = process.env.PORT || 5000;
 async function main() {
   try {
-    const _FORCE = true;
+    const _FORCE = false;
     await sequelize.sync({ force: _FORCE });
     app.listen(PORT, async () => {
       _FORCE && await preloadCountrys();
