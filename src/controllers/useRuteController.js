@@ -5,7 +5,6 @@ import { User } from "../models/User.js";
 import { findAllUsers, findUserById } from "../models/Views/users.views.js";
 import { deleteFile } from "../middlewares/cloudinary.js";
 import { Solicitudes } from "../models/Solicitudes.js";
-import { findByUser } from "../models/Views/pets.views.js";
 import { findCity } from "./petsController.js";
 
 /// POST USER
@@ -15,9 +14,6 @@ export const createUser = async (req, res) => {
   const idfiles = req?.file ? req.file.filename.slice(req.file.filename.lastIndexOf("/") + 1) : {};
   const { data } = req.body;
   const infoUser = typeof data === "string" ? JSON.parse(req.body?.data) : req.body;
-  console.log("data: ", data);
-  console.log('documentfile', documentfile);
-  console.log("infoUser: ", infoUser);
   try {
     const {
       name,
